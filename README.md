@@ -1,7 +1,7 @@
 # TOP-Battleship
-# Battleship game - Human vs Computer
+## Battleship game - Human vs Computer
 
-##Tasks 
+## Tasks 
 - [ ] Create the Ship class and test the methods
 - [ ] Create the Board class and test the methods 
 - [ ] Optimize board and ship class to work together
