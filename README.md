@@ -1,5 +1,4 @@
 # TOP-Battleship
-## Battleship game - Human vs Computer
 
 ## Tasks 
 - [ ] Create the Ship class and test the methods
