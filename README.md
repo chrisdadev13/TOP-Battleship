@@ -1,7 +1,7 @@
 # TOP-Battleship
 
 ## Tasks 
-- [ ] Create the Ship class and test the methods
+- [x] Create the Ship class and test the methods
 - [ ] Create the Board class and test the methods 
 - [ ] Optimize board and ship class to work together
 - [ ] Create the Player class and test 
