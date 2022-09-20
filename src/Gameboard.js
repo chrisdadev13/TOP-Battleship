@@ -1,6 +1,6 @@
 const Gameboard = () => {
-  const COLS = 2;
-  const ROWS = 2;
+  const COLS = 10;
+  const ROWS = 10;
   let board = [];
 
   const createBoard = () => {
@@ -24,7 +24,7 @@ const Gameboard = () => {
   const colShip = (ship, coordinate) => {
     let board = createBoard();
     if(ship.direction == 'col'){
-      for(let i = coordinate; i < ship.long * COLS; i = i + ROWS){
+      for(let i = coordinate; i < ship.long + COLS; i = i + ROWS){
         board[i] = ship.name;
         ship.position.push(board[i]);
       }
