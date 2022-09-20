@@ -1,35 +1,24 @@
-class Ship{
-  constructor(name, long, position, sunk = false){
-    this.name = name;
-    this.long = long;
-    this.position = position;
-    this.sunk = sunk;
-  }
-
-  setSunk(sunk){
-    this.sunk = sunk;
-    return this;
-  }
-
-  hit(target){
-    for(let i = 0; i < this.position.length; i++){
-      if(target == this.position[i]){
-        this.position[i] = 'hit';
+const Ship = (name,  direction, long, position, sunk = false) => {
+  const hit = (target) => {
+    for(let i = 0; i < position.length; i++){
+      if(target == position[i]){
+        position[i] = 'hit';
       }
     }
-    return this.position;
+    return position;
   }
 
-  isSunk(){
-    for(let i = 0; i < this.position.length; i++){
-      if(this.position[i] != 'hit'){
-        this.sunk = false;
+  const isSunk = () => {
+    for(let i = 0; i < position.length; i++){
+      if(position[i] != 'hit'){
+        sunk = false;
       }else{
-        this.sunk = true;
+        sunk = true;
       }
     }
-    return this.sunk;
+    return sunk;
   }
+  return { name, direction, long, position, sunk, hit, isSunk };
 }
 
 module.exports = Ship;
