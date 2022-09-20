@@ -10,13 +10,17 @@ describe('Ship was hitted test', () => {
     expect(boat.hit(3)).toEqual([1, 2]);
   });
 });
-
 describe('Ship is sunked? test', () => {
-  let newBoat = new Ship("submarine", 3, [1, 2, 3], false);
-  newBoat,hit(1);
-  newBoat.hit(2);
-  newBoat.hit(3);
+  let testSub = new Ship("submarine", 3, [1, 2, 3]);
+  testSub.hit(1);
+  testSub.hit(2);
+  testSub.hit(3);
   test('Submarine is sunked', () => {
-    expect(newBoat.isSunk()).toEqual(true);
+    expect(testSub.isSunk()).toEqual(true);
+  });
+  let testBoat = new Ship("boat", 2, [1, 2]);
+  testBoat.hit(1);
+  test('Boat is not sunked', () => {
+    expect(testBoat.isSunk()).toEqual(false);
   });
 });

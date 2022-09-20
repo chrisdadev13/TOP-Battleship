@@ -23,9 +23,9 @@ class Ship{
   isSunk(){
     for(let i = 0; i < this.position.length; i++){
       if(this.position[i] != 'hit'){
-        this.setSunk(false)
+        this.sunk = false;
       }else{
-        this.setSunk(true);
+        this.sunk = true;
       }
     }
     return this.sunk;
