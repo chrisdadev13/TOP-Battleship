@@ -1,47 +1,38 @@
-class Gameboard{
-  constructor(width = 10, long = 10){
-    this.witdth = width;
-    this.long = long;
-  }
+const Gameboard = () => {
+  const COLS = 2;
+  const ROWS = 2;
+  let board = [];
 
-  boardMeasures(){
-    return this.witdh * this.long;
-  }
-  
-  setGameBoard(){
-    let board = [];
-    for(let i = 0; i < this.boardMeasures; i++){
-      board.push(undefined);
+  const createBoard = () => {
+    for(let i = 0; i < COLS * ROWS; i++){
+      board.push(i);
     }
     return board;
   }
 
-  rowShip(ship, coordinates){
-    let board = this.setGameBoard;
+  const rowShip = (ship, coordinate) => {
+    let board = createBoard();
     if(ship.direction == 'row'){
-      for(let i = coordinates; i < ship.long + coordinates; i++){
+      for(let i = coordinate; i < ship.long + coordinate; i++){
         board[i] = ship.name;
+        ship.position.push(board[i]);
       }
     }
     return board;
   }
 
-  colShip(ship, coordinates){
-    let board = this.setGameBoard;
+  const colShip = (ship, coordinate) => {
+    let board = createBoard();
     if(ship.direction == 'col'){
-      for(let i = ship.coordinates; i < ship.long * 10; i = i + 10){
+      for(let i = coordinate; i < ship.long * COLS; i = i + ROWS){
         board[i] = ship.name;
+        ship.position.push(board[i]);
       }
     }
     return board;
   }
 
+  return { rowShip, colShip };
 }
-
-const Ship = require('./Ship');
-
-const sub = new Ship("submarine", 3);
-let board = new Gameboard;
-console.log(board.rowShip(sub, 3));
 
 module.exports = Gameboard;
