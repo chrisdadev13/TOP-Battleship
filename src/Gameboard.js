@@ -36,7 +36,7 @@ const Gameboard = () => {
     }
   }
 
-  const receiveAttack = (target, ship) => {
+  const receiveAttack = (target) => {
     for(let i = 0; i < board.length; i++){
       if(typeof board[i] != 'string' && i == target){
         board[i] = 'Missed';
