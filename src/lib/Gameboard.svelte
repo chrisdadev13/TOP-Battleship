@@ -10,8 +10,6 @@
   }
   createBoard();
 
-  $:board[0] = 'Missed'
-  $:board[1] = 'Missed'
 
 </script>
 
@@ -21,7 +19,6 @@
       <div class="sea-container board-tile" />
     {:else if typeof tile == 'string' && tile == 'Missed'}
       <div class="missed-container">
-        X
       </div>
     {:else if typeof tile == 'string' && tile != 'Missed'}
       <div class="ship-container" />
@@ -45,7 +42,6 @@
     padding: 20px;
     border: 1px solid red;
     background-color: #f2f4f8;
-    font-size: 48px;
     color: red;
   }
 

@@ -14,16 +14,22 @@ const Gameboard = () => {
 
   const rowShip = (ship, coordinate) => {
     for(let i = coordinate; i < ship.long + coordinate; i++){
-      board[i] = ship.name;
-      ship.position.push(i);
+      ship.position.push({
+        index: i,
+        name: ship.name,
+      });
+      board[i] = ship.position[i];
     }
     return board;
   }
 
   const colShip = (ship, coordinate) => {
     for(let i = coordinate; i < ship.long + COLS; i = i + ROWS){
-      board[i] = ship.name;
-      ship.position.push(i);
+      ship.position.push({
+        index: i,
+        name: ship.name,
+      });
+      board[i] = ship.position[i];
     }
     return board;
   }
