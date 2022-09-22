@@ -1,8 +1,7 @@
 const Gameboard = () => {
+  let board = [];
   const COLS = 2;
   const ROWS = 2;
-
-  board = COLS * ROWS;
 
   const createBoard = () => {
     for(let i = 0; i < COLS * ROWS; i++){
@@ -11,24 +10,20 @@ const Gameboard = () => {
     return board;
   }
 
+  createBoard();
+
   const rowShip = (ship, coordinate) => {
-    let board = createBoard();
-    if(ship.direction == 'row'){
-      for(let i = coordinate; i < ship.long + coordinate; i++){
-        board[i] = ship.name;
-        ship.position.push(i);
-      }
+    for(let i = coordinate; i < ship.long + coordinate; i++){
+      board[i] = ship.name;
+      ship.position.push(i);
     }
     return board;
   }
 
   const colShip = (ship, coordinate) => {
-    let board = createBoard();
-    if(ship.direction == 'col'){
-      for(let i = coordinate; i < ship.long + COLS; i = i + ROWS){
-        board[i] = ship.name;
-        ship.position.push(i);
-      }
+    for(let i = coordinate; i < ship.long + COLS; i = i + ROWS){
+      board[i] = ship.name;
+      ship.position.push(i);
     }
     return board;
   }
@@ -42,12 +37,14 @@ const Gameboard = () => {
   }
 
   const receiveAttack = (target, ship) => {
-    for(let i = 0; i < ship.position.length; i++){
-      if(i == target && typeof board[i] != 'string'){
-        ship.hit(target);
-      }else{
-        board[i] = 'missed';
-      }
+    for(let i = 0; i < board.length; i++){
+      if(typeof board[i] != 'string' && i == target){
+        board[i] = 'Missed';
+        break;
+      }else if(typeof board[i] == 'string' && board[i] != 'Missed' && i == target){
+        board[i] = 'Hitted';
+        break;
+      } 
     }
     return board;
   }
