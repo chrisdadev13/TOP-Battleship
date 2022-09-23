@@ -20,7 +20,7 @@ export default class Battleship{
   }
 
   isSunk(){
-    if(this.position.every('Hitted')){
+    if(this.position.every(element => element == 'Hitted')){
       this.sunk = true;
       return this.sunk;
     }

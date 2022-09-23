@@ -11,7 +11,7 @@ export default class Board{
   init(){
     for(let i = 0; i < 100; i++){
       this.board.push({
-        status: 0, //0: Water, 1: Missed, 2, Hitted, 3: Boat, 4: Sunked 
+        status: 0, //0: Water, 1: Missed, 2: Hitted, 3: Boat, 4: Sunked 
         index: i
       }) 
     }
@@ -67,6 +67,7 @@ export default class Board{
       this.board[target].status = 1;
     }else if(typeof this.board[target] == 'object'){
       this.board[target].hit(target);
+      this.board[target] = {status: 2};
     }else{
       this.board[target].status = this.board[target].status;
     }
