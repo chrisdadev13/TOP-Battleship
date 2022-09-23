@@ -12,8 +12,10 @@ export default class Battleship{
   }
 
   hit(target){
-    if(this.position.includes(target)){
-      return this.position[target] = 'Hitted';
+    for(let i = 0; i < this.position.length; i++){
+      if(this.position[i] == target){
+        this.position[i] = 'Hitted';
+      }
     }
   }
 
