@@ -2,7 +2,7 @@ import Battleship from "./Ship.js";
 
 const BOARD_SIZE = 10;
 
-class Gameboard{
+export default class Gameboard{
   constructor(){
     this.board = [];
     this.init();
@@ -21,66 +21,68 @@ class Gameboard{
   rowShip(ship, coordinate){
     for(let i = coordinate; i < ship.long + coordinate; i++){
       ship.position.push(this.board[i].index);
-      this.board[i].status = 4;
+      this.board[i] = ship;
     }
   }
 
   colShip(ship, coordinate){
-    for(let i = coordinate; i < (ship.long * BOARD_SIZE) - BOARD_SIZE; i += BOARD_SIZE){
+    for(let i = coordinate; i < ((ship.long * BOARD_SIZE) + coordinate) - BOARD_SIZE; i += BOARD_SIZE){
       ship.position.push(this.board[i].index);
-      this.board[i].status = 4;
+      this.board[i] = ship;
     }
   }
 
   placeShip(ship, coordinate){
     if(ship.row == true && this.isPlaceable(ship, coordinate) == true){
       return this.rowShip(ship, coordinate);
-    }else if(ship.row == false && this.isPlaceable(ship, coordinate) == true){
+    }else if(ship.row == false){
       return this.colShip(ship, coordinate);
-    }else{
-      console.log('You cant put your ship in that place')
-    }
+    }  
   }
 
   isPlaceable(ship, coordinate){
+    let placeable = false;
     if(ship.row == true){
       for(let i = 0; i < ship.long + coordinate; i++){
         if(this.board[i].status == 0){
-          return true;
+          placeable = true;
         }else{
-          return false;
+          placeable = false;
         }
       }
-    }else{
+    }else if(ship.row == false){
       for(let i = 0; i < (ship.long + BOARD_SIZE) - BOARD_SIZE; i+= BOARD_SIZE){
         if(this.board[i].status == 0){
-          return true;
+          placeable = true;
         }else{
-          return false;
+          placeable = false;
         }
       }
     }
+    return placeable;
   }
 
   receiveAttack(target){
-    
+    for(let i = 0; i < this.board.length; i++){
+      if(target == this.board[i].index && this.board[i].status == 0){
+        this.board[i].status = 1;
+      }
+    }  
   }
 }
 
 const board = new Gameboard;
 
 const submarine = new Battleship(3, [], true, false);
-const carrier = new Battleship(5, [], false, false);
-
+const carrier = new Battleship(3, [], false, false);
 const boat = new Battleship(3, [], true, false);
+const carror = new Battleship(5, [], false, false);
 
-console.log(board.placeShip(submarine, 0));
+board.placeShip(carror, 0);
 
-console.log(board.placeShip(carrier, 5));
+board.placeShip(submarine, 60);
 
-console.log(board.placeShip(boat, 4));
+board.placeShip(carrier, 65);
 
-console.log(submarine);
-console.log(carrier);
-
+board.placeShip(carrier, 80);
 console.log(board);
