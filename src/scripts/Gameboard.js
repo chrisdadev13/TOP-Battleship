@@ -9,7 +9,7 @@ export default class Gameboard{
   }
 
   init(){
-    for(let i = 0; i < BOARD_SIZE * BOARD_SIZE; i++){
+    for(let i = 0; i < 100; i++){
       this.board.push({
         status: 0, //0: Water, 1: Missed, 2, Hitted, 3: Boat, 4: Sunked 
         index: i
@@ -26,7 +26,7 @@ export default class Gameboard{
   }
 
   colShip(ship, coordinate){
-    for(let i = coordinate; i < ((ship.long * BOARD_SIZE) + coordinate) - BOARD_SIZE; i += BOARD_SIZE){
+    for(let i = coordinate; i < ((ship.long * BOARD_SIZE) + coordinate); i += BOARD_SIZE){
       ship.position.push(this.board[i].index);
       this.board[i] = ship;
     }
@@ -35,7 +35,7 @@ export default class Gameboard{
   placeShip(ship, coordinate){
     if(ship.row == true && this.isPlaceable(ship, coordinate) == true){
       return this.rowShip(ship, coordinate);
-    }else if(ship.row == false){
+    }else if(ship.row == false && this.isPlaceable(ship, coordinate) == true){
       return this.colShip(ship, coordinate);
     }  
   }
@@ -51,7 +51,7 @@ export default class Gameboard{
         }
       }
     }else if(ship.row == false){
-      for(let i = 0; i < (ship.long + BOARD_SIZE) - BOARD_SIZE; i+= BOARD_SIZE){
+      for(let i = 0; i < ((ship.long * BOARD_SIZE) + coordinate); i+= BOARD_SIZE){
         if(this.board[i].status == 0){
           placeable = true;
         }else{
@@ -63,11 +63,13 @@ export default class Gameboard{
   }
 
   receiveAttack(target){
-    for(let i = 0; i < this.board.length; i++){
-      if(target == this.board[i].index && this.board[i].status == 0){
-        this.board[i].status = 1;
-      }
-    }  
+    if(this.board[target].status == 0){
+      this.board[target].status = 1;
+    }else if(typeof this.board[target] == 'object'){
+      this.board[target].hit(target);
+    }else{
+      this.board[target].status = this.board[target].status;
+    }
   }
 }
 
@@ -78,11 +80,24 @@ const carrier = new Battleship(3, [], false, false);
 const boat = new Battleship(3, [], true, false);
 const carror = new Battleship(5, [], false, false);
 
+board.init()
+
+console.log(submarine);
+console.log(carrier);
+console.log(boat);
+console.log(carror);
 board.placeShip(carror, 0);
 
 board.placeShip(submarine, 60);
 
-board.placeShip(carrier, 65);
+board.receiveAttack(60);
+board.receiveAttack(61);
+board.receiveAttack(62);
 
-board.placeShip(carrier, 80);
+
 console.log(board);
+
+console.log(submarine);
+console.log(carrier);
+console.log(boat);
+console.log(carror);
