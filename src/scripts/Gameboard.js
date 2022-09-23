@@ -21,23 +21,49 @@ class Gameboard{
   rowShip(ship, coordinate){
     for(let i = coordinate; i < ship.long + coordinate; i++){
       ship.position.push(this.board[i].index);
-      this.board[i].status = 3;
+      this.board[i].status = 4;
     }
   }
 
   colShip(ship, coordinate){
     for(let i = coordinate; i < (ship.long * BOARD_SIZE) - BOARD_SIZE; i += BOARD_SIZE){
       ship.position.push(this.board[i].index);
-      this.board[i].status = 3;
+      this.board[i].status = 4;
     }
   }
 
   placeShip(ship, coordinate){
-    if(ship.row == true){
+    if(ship.row == true && this.isPlaceable(ship, coordinate) == true){
       return this.rowShip(ship, coordinate);
-    }else{
+    }else if(ship.row == false && this.isPlaceable(ship, coordinate) == true){
       return this.colShip(ship, coordinate);
+    }else{
+      console.log('You cant put your ship in that place')
     }
+  }
+
+  isPlaceable(ship, coordinate){
+    if(ship.row == true){
+      for(let i = 0; i < ship.long + coordinate; i++){
+        if(this.board[i].status == 0){
+          return true;
+        }else{
+          return false;
+        }
+      }
+    }else{
+      for(let i = 0; i < (ship.long + BOARD_SIZE) - BOARD_SIZE; i+= BOARD_SIZE){
+        if(this.board[i].status == 0){
+          return true;
+        }else{
+          return false;
+        }
+      }
+    }
+  }
+
+  receiveAttack(target){
+    
   }
 }
 
