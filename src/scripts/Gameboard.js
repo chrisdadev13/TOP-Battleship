@@ -2,7 +2,7 @@ import Battleship from "./Ship.js";
 
 const BOARD_SIZE = 10;
 
-export default class Gameboard{
+export default class Board{
   constructor(){
     this.board = [];
     this.init();
@@ -72,32 +72,3 @@ export default class Gameboard{
     }
   }
 }
-
-const board = new Gameboard;
-
-const submarine = new Battleship(3, [], true, false);
-const carrier = new Battleship(3, [], false, false);
-const boat = new Battleship(3, [], true, false);
-const carror = new Battleship(5, [], false, false);
-
-board.init()
-
-console.log(submarine);
-console.log(carrier);
-console.log(boat);
-console.log(carror);
-board.placeShip(carror, 0);
-
-board.placeShip(submarine, 60);
-
-board.receiveAttack(60);
-board.receiveAttack(61);
-board.receiveAttack(62);
-
-
-console.log(board);
-
-console.log(submarine);
-console.log(carrier);
-console.log(boat);
-console.log(carror);
