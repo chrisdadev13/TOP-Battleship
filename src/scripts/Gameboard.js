@@ -12,8 +12,7 @@ export default class Board{
     for(let i = 0; i < 100; i++){
       this.board.push({
         status: 0, //0: Water, 1: Missed, 2: Hitted, 3: Boat, 4: Sunked 
-        index: i
-      }) 
+        index: i}) 
     }
     return this.board;
   }
@@ -21,14 +20,14 @@ export default class Board{
   rowShip(ship, coordinate){
     for(let i = coordinate; i < ship.long + coordinate; i++){
       ship.position.push(this.board[i].index);
-      this.board[i] = ship;
+      this.board[i] = {status: 4, index: i, ship: ship};
     }
   }
 
   colShip(ship, coordinate){
     for(let i = coordinate; i < ((ship.long * BOARD_SIZE) + coordinate); i += BOARD_SIZE){
       ship.position.push(this.board[i].index);
-      this.board[i] = ship;
+      this.board[i] = {status: 4, index: i, ship: ship};
     }
   }
 
@@ -40,11 +39,28 @@ export default class Board{
     }  
   }
 
+  rowCollision(ship, coordinate){
+    const collisionPoints = [8, 18, 28, 38, 48, 58, 68, 78, 88, 98];
+    let collision;
+    for(let i = 0; i < collisionPoints.length; i++){
+      if(coordinate == collisionPoints[i]){
+        collision = true;
+      }else{
+        collision = false;
+      }
+    }
+    return collision;
+  }
+
+  colCollision(ship, coordinate){
+  
+  }
+
   isPlaceable(ship, coordinate){
     let placeable = false;
     if(ship.row == true){
       for(let i = 0; i < ship.long + coordinate; i++){
-        if(this.board[i].status == 0){
+        if(this.board[i].status == 0 && this.rowCollision(ship, coordinate) == false){
           placeable = true;
         }else{
           placeable = false;
@@ -65,8 +81,8 @@ export default class Board{
   receiveAttack(target){
     if(this.board[target].status == 0){
       this.board[target].status = 1;
-    }else if(typeof this.board[target] == 'object'){
-      this.board[target].hit(target);
+    }else if(this.board[target].status == 4){
+      this.board[target].ship.hit(target);
       this.board[target] = {status: 2};
     }else{
       this.board[target].status = this.board[target].status;
