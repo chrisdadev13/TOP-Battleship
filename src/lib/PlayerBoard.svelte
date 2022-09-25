@@ -4,7 +4,8 @@
   import Player from '../scripts/Player';
 
   let gameBoard = new Board; 
-  let submarine = new Ship(3, [], true, false);
+  let direction = true;
+  let submarine = new Ship(3, [], false, direction);
   let carrier = new Ship(5, [], false, false);
 
   const placeShipOnBoard = (event) => {
@@ -12,6 +13,11 @@
     gameBoard.placeShip(submarine, target);
     console.log(submarine);
     gameBoard = gameBoard;
+  }
+
+  const changeDirection = () => {
+    direction = false;
+    submarine = submarine;
   }
 </script>
 
@@ -26,6 +32,7 @@
     {/if}
  {/each}
 </main>
+  <button on:click={changeDirection}>rotate</button>
 
 <style>
   .board-container{
