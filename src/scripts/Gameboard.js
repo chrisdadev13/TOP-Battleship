@@ -59,15 +59,15 @@ export default class Board{
   isPlaceable(ship, coordinate){
     let placeable = false;
     if(ship.row == true){
-      for(let i = 0; i < ship.long + coordinate; i++){
-        if(this.board[i].status == 0 && this.rowCollision(ship, coordinate) == false){
+      for(let i = coordinate; i < ship.long + coordinate; i++){
+        if(this.board[i].status == 0){
           placeable = true;
         }else{
           placeable = false;
         }
       }
-    }else if(ship.row == false){
-      for(let i = 0; i < ((ship.long * BOARD_SIZE) + coordinate); i+= BOARD_SIZE){
+    }else{
+      for(let i = coordinate; i < ((ship.long * BOARD_SIZE) + coordinate); i+= BOARD_SIZE){
         if(this.board[i].status == 0){
           placeable = true;
         }else{

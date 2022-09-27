@@ -5,34 +5,23 @@
 
   let gameBoard = new Board; 
   let direction = true;
-  let submarine = new Ship(3, [], false, direction);
+  let submarine = new Ship(3, [], true, false);
   let carrier = new Ship(5, [], false, false);
+  gameBoard.placeShip(submarine, 0)
 
-  const placeShipOnBoard = (event) => {
-    let target = parseInt(event.target.id);
-    gameBoard.placeShip(submarine, target);
-    console.log(submarine);
-    gameBoard = gameBoard;
-  }
-
-  const changeDirection = () => {
-    direction = false;
-    submarine = submarine;
-  }
 </script>
 
 <main class="board-container">
   {#each gameBoard.board as tile}
     {#if tile.status == 0}
-      <div class="sea-tile" id={tile.index} on:click={event => placeShipOnBoard(event)}>
+      <div class="sea-tile" id={tile.index}>
       </div> 
-    {:else if tile.status != 0}
-      <div class="ship-tile">
+    {:else if tile.status == 4}
+      <div class="ship-tile" draggable="true">
       </div> 
     {/if}
  {/each}
 </main>
-  <button on:click={changeDirection}>rotate</button>
 
 <style>
   .board-container{
