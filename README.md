@@ -9,8 +9,6 @@ Battleship game created for "The Odin Project", in order to learn and practice a
 
 ## Get started
 
-Install the dependencies...
-
 ```bash
 git clone git@github.com:chrisdadev13/TOP-Battleship.git
 cd TOP-Battleship 
