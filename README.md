@@ -26,7 +26,7 @@ npm run dev
 Navigate to [localhost:8080](http://localhost:8080). 
 
 ---
-## Project was build with
+## I build this game with
 - [TypeScript](https://www.typescriptlang.org/)
 - [Svelte](https://svelte.dev/)
 - [jest](https://jestjs.io/)
