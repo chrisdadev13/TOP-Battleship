@@ -3,7 +3,7 @@
 ---
 
 ## The Project
-This is a battleship game created for "The Odin Project", the idea was to learn about Test Driven Development with javascript
+Battleship game created for "The Odin Project", in order to learn and practice about Test Driven Development with Javascript,
 
 ## Get started
 
