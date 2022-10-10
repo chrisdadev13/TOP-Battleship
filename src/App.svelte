@@ -1,8 +1,10 @@
-<script>
-  import PlayerBoard from "./lib/PlayerBoard.svelte";
+<script lang="ts">
+  import BoardUi from "./components/BoardUI.svelte";
 </script>
 
 <main>
-  <h1>Hola</h1>
-  <PlayerBoard />
+  <BoardUi />
 </main>
+
+<style>
+</style>
