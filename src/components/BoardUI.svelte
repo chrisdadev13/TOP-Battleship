@@ -3,7 +3,7 @@
   import Ship from "../scripts/ship";
   import ShipsUI from "./ShipUI.svelte"; 
 
-  let board = new Gameboard;
+  export let board: Gameboard ;
   let carrier = new Ship(4, [], false);
   let battleship = new Ship(4, [], false);
   let cruiser= new Ship(3, [], false);
@@ -18,7 +18,7 @@
     patrol
   ] 
 
-  let vertical = true;
+  let vertical = false;
 
   $: shipVertical = vertical;
 
@@ -66,7 +66,18 @@
     dragging = false;
   }
 
-  $:console.log(dragging);
+  $: shipName = "Carrier";
+  $: if(count == 1){
+    shipName = "Battleship";
+  }else if(count == 2){
+    shipName = "Cruiser";
+  }else if(count == 3){
+    shipName = "Submarine";
+  }else if(count == 4){
+    shipName = "Patrol";
+  }else if(count > 4){
+    shipName = "";
+  }
 
 </script>
 <main class="container">
@@ -94,12 +105,15 @@
       {/each}
     {/each}
   </div>  
-  <ShipsUI ships={ships} vertical={shipVertical} onDragShip={dragShip} offDragShip={dropShip} count={count} />
+  <div style="position: abolute; display: flex;">
+    <p class={count == 5 ? "inactive-button" : "rotate-button"} on:click={rotateShips}>Rotate</p>
+    <p class={count == 5 ? "rotate-button" : "inactive-button"}>Play </p>
+  </div>
 </main>
 
-<div style="position: absolute; top: 390px; left: 15px; display: flex;">
-  <p class={count == 5 ? "inactive-button" : "rotate-button"} on:click={rotateShips}>Rotate</p>
-  <p class={count == 5 ? "rotate-button" : "inactive-button"}>Play </p>
+<div style="text-align: center;">
+  <h2>{shipName}</h2>
+  <ShipsUI ships={ships} vertical={shipVertical} onDragShip={dragShip} offDragShip={dropShip} count={count} />
 </div>
 
 

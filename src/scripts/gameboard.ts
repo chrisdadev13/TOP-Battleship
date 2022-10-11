@@ -25,7 +25,6 @@ export default class Gameboard{
     else 
       if(typeof this.board[row][col] == 'object')
         this.board[row][col] = "Hitted";
-        this.board[row][col].hit('Hitted');
   }
 
   placeShip(ship: Ship, row: number, col: number, vertical: boolean){
