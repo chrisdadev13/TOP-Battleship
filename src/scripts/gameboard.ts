@@ -21,7 +21,7 @@ export default class Gameboard{
 
   receiveAttack(row: number, col: number){
     if(this.board[row][col] == 0 || this.board[row][col] == 1)
-      this.board[row][col] = "X"; 
+      this.board[row][col] = "Missed"; 
     else if(typeof this.board[row][col] == 'object'){
       if(this.board[row][col].initialCol == undefined){
         this.board[row][col].hitX(row, col);
@@ -257,6 +257,34 @@ export default class Gameboard{
       return false;
     }else if(this.board[row][col] == 0 && this.shipCollisions(ship, row, col, vertical) == false){
       return true;
+    }
+  }
+
+  placeRandomly(){
+    let carrier = new Ship(4, 0, false, []);
+    let battleship = new Ship(4, 0, false, []);
+    let cruiser= new Ship(3, 0, false, []);
+    let submarine= new Ship(2, 0, false, []);
+    let patrol= new Ship(2, 0, false, []);
+
+    let ships = [
+      carrier,
+      battleship,
+      cruiser,
+      submarine,
+      patrol
+    ]
+
+    let counter = 0;
+
+    while(counter < 5){
+      let row = Math.floor(Math.random() * 10);
+      let col = Math.floor(Math.random() * 10);
+      let vertical = Math.floor(Math.random * 2) == 1 ? true : false;
+
+      if(this.placeShip(ships[counter], row, col, vertical) == true){
+        counter++;
+      }
     }
   }
 }
