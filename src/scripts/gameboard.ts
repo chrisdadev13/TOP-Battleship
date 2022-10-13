@@ -20,11 +20,20 @@ export default class Gameboard{
   }
 
   receiveAttack(row: number, col: number){
-    if(this.board[row][col] == 0)
+    if(this.board[row][col] == 0 || this.board[row][col] == 1)
       this.board[row][col] = "X"; 
-    else 
-      if(typeof this.board[row][col] == 'object')
+    else if(typeof this.board[row][col] == 'object'){
+      if(this.board[row][col].initialCol == undefined){
+        this.board[row][col].hitX(row, col);
         this.board[row][col] = "Hitted";
+      }else{
+        this.board[row][col].hitY(row, col);
+        this.board[row][col] = "Hitted";
+      }
+    }
+    else{
+      console.log("You can't attack here");
+    }
   }
 
   placeShip(ship: Ship, row: number, col: number, vertical: boolean){
@@ -33,6 +42,7 @@ export default class Gameboard{
         this.board[row + i][col] = ship;
       } 
       this.enableShipPlace(ship, row, col, vertical);
+      ship.positionY(vertical, row, col);
       return true;
     }        
     else if(vertical == false && this.isShipPlaceable(ship, row, col, vertical) == true){
@@ -40,6 +50,7 @@ export default class Gameboard{
         this.board[row][col + i] = ship;
       }
       this.enableShipPlace(ship, row, col, vertical);
+      ship.positionX(vertical, row, col);
       return true;
     }
   }
@@ -248,87 +259,4 @@ export default class Gameboard{
       return true;
     }
   }
-
-  placeShipRandomly(){
-    let counter = 0;
-
-    let carrier = new Ship(4, [], false);
-    let battleship = new Ship(4, [], false);
-    let cruiser = new Ship(3, [], false);
-    let submarine = new Ship(2, [], false);
-    let patrol = new Ship(2, [], false);
-
-    let row: number;
-    let col: number;
-
-    let verticalSelector: number;
-    let vertical: boolean;
-
-    do{
-      verticalSelector = Math.random();
-      vertical = verticalSelector > 0.5 ? true : false;
-
-      row = Math.floor(Math.random() * (9 - 0 + 1)) + 0;
-      col = Math.floor(Math.random() * (9 - 0 + 1)) + 0;
-      switch(counter){
-        case 0:
-          if(this.board[row][col] != 0){
-            while(this.board[row][col] != 0){
-              row = Math.floor(Math.random() * (9 + 1));
-              col = Math.floor(Math.random() * (9 + 1));
-            }
-            this.placeShip(carrier, row, col, vertical);
-          }
-          else{
-            this.placeShip(carrier, row, col, vertical); 
-          }
-        case 1:
-          if(this.board[row][col] != 0){
-            while(this.board[row][col] != 0){
-              row = Math.floor(Math.random() * (9 + 1));
-              col = Math.floor(Math.random() * (9 + 1));
-            }
-            this.placeShip(battleship, row, col, vertical);
-          }
-          else{
-            this.placeShip(battleship, row, col, vertical); 
-          }
-        case 2:
-          if(this.board[row][col] != 0){
-            while(this.board[row][col] != 0){
-              row = Math.floor(Math.random() * (9 + 1));
-              col = Math.floor(Math.random() * (9 + 1));
-            }
-            this.placeShip(cruiser, row, col, vertical);
-          }
-          else{
-            this.placeShip(cruiser, row, col, vertical); 
-          }
-        case 3: 
-          if(this.board[row][col] != 0){
-            while(this.board[row][col] != 0){
-              row = Math.floor(Math.random() * (9 + 1));
-              col = Math.floor(Math.random() * (9 + 1));
-            }
-            this.placeShip(submarine, row, col, vertical);
-          }
-          else{
-            this.placeShip(submarine, row, col, vertical); 
-          }
-        case 4:
-          if(this.board[row][col] != 0){
-            while(this.board[row][col] != 0){
-              row = Math.floor(Math.random() * (9 + 1));
-              col = Math.floor(Math.random() * (9 + 1));
-            }
-            this.placeShip(patrol, row, col, vertical);
-          }
-          else{
-            this.placeShip(patrol, row, col, vertical); 
-          }
-      }
-      counter++;
-    }while(counter < 6);
-  }
-
 }
