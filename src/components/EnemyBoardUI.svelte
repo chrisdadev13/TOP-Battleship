@@ -3,7 +3,7 @@
   import Ship from "../scripts/ship";
 
   export let board;
-
+  export let attackBoard;
 </script>
 
 
@@ -16,6 +16,7 @@
             class={"empty-tile"}
             data-row={rowIndex} 
             data-col={colIndex}
+            on:click={(event) => attackBoard(event)}
           >
           </div> 
         {:else if board.board[rowIndex][colIndex] == 1 || typeof board.board[rowIndex][colIndex] == "object"}
@@ -23,9 +24,10 @@
             class={"empty-tile"}
             data-row={rowIndex} 
             data-col={colIndex}
+            on:click={(event) => attackBoard(event)}
           >
           </div> 
-        {:else if board.board[rowIndex][colIndex] == "X"} 
+        {:else if board.board[rowIndex][colIndex] == "Missed"} 
           <div 
             class={"missed-tile"} 
             data-row={rowIndex} 
@@ -84,11 +86,5 @@
     justify-content: center;
     font-weight: bold;
     font-size: 12px;
-  }
-  .ship-tile{
-    width: full;
-    height: full;
-    border: 1px solid #0000ff;
-    background-color: #f2f2ff;
   }
 </style>

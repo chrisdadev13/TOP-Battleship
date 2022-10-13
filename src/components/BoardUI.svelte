@@ -3,12 +3,15 @@
   import Ship from "../scripts/ship";
   import ShipsUI from "./ShipUI.svelte"; 
 
-  export let board: Gameboard ;
-  let carrier = new Ship(4, [], false);
-  let battleship = new Ship(4, [], false);
-  let cruiser= new Ship(3, [], false);
-  let submarine= new Ship(2, [], false);
-  let patrol= new Ship(2, [], false);
+  export let board: Gameboard;
+  export let hideBtn: any;
+  export let boardOwner: string;
+
+  let carrier = new Ship(4, 0, false, []);
+  let battleship = new Ship(4, 0, false, []);
+  let cruiser= new Ship(3, 0, false, []);
+  let submarine= new Ship(2, 0, false, []);
+  let patrol= new Ship(2, 0, false, []);
  
   let ships = [
     carrier,
@@ -16,7 +19,7 @@
     cruiser,
     submarine,
     patrol
-  ] 
+  ]
 
   let vertical = false;
 
@@ -30,8 +33,10 @@
 
   $: row = tileRow;
   $: col = tileCol
+  $: shipDragging = dragging;
 
   let count = 0;
+  $:console.log(shipDragging);
 
   function dragShip(event){
     dragging = true;
@@ -66,6 +71,24 @@
     dragging = false;
   }
 
+  function changeTileColor(tile: any){
+    const tileStyles = {
+      0: "empty-tile",
+      1: "empty-tile",
+      "Hitted": "hitted-tile",
+      "Missed": "missed-tile"
+    }
+    return tileStyles[tile] ?? 0;
+  }
+
+  function changeTileText(tile: any){
+    const tileText = {
+      "Hitted": "X",
+      "Missed" : "*"
+    }
+    return tileText[tile] ?? "";
+  }
+
   $: shipName = "Carrier";
   $: if(count == 1){
     shipName = "Battleship";
@@ -81,33 +104,31 @@
 
 </script>
 <main class="container">
-  <div class="board-container">
+  <div class="board-container" data-owner={boardOwner}>
     {#each board.board as row, rowIndex}
       {#each row as col, colIndex}
-        {#if typeof board.board[rowIndex][colIndex] != "object"}
-          <div 
-            class={board.board[rowIndex][colIndex] == 1 && dragging == true ? "enable-tile" : "empty-tile"}
-            data-row={rowIndex} 
+        {#if typeof board.board[rowIndex][colIndex] !== "object"}
+          <div
+            class={board.board[rowIndex][colIndex] == 1 && dragging == true ? "enable-tile" : changeTileColor(board.board[rowIndex][colIndex])}
+            data-row={rowIndex}
             data-col={colIndex}
             on:dragover={(event) => getCoordinates(event)}
           >
-            {board.board[rowIndex][colIndex] == "Hitted" ? "X" : ""}
-          </div> 
-        {:else if typeof board.board[rowIndex][colIndex] == "object"} 
+            {changeTileText(board.board[rowIndex][colIndex])}
+          </div>
+        {:else if typeof board.board[rowIndex][colIndex] == "object"}
           <div 
-            class='ship-tile' 
-            data-row={rowIndex} 
+            class={"ship-tile"}
+            data-row={rowIndex}
             data-col={colIndex}
-          >
-            {board.board[rowIndex][colIndex] == "Hitted" ? "X" : ""}
-          </div> 
+          />
         {/if}
       {/each}
     {/each}
   </div>  
-  <div style="position: abolute; display: flex;">
+  <div style="position: abolute; display: flex;" id="init-btn-container">
     <p class={count == 5 ? "inactive-button" : "rotate-button"} on:click={rotateShips}>Rotate</p>
-    <p class={count == 5 ? "rotate-button" : "inactive-button"}>Play </p>
+    <p class={count == 5 ? "rotate-button" : "inactive-button"} on:click={count != 5 ? () => {return 0} : hideBtn}>Play</p>
   </div>
 </main>
 
@@ -156,7 +177,30 @@
   }
   .inactive-button{
     color: #757575;
-    cursor:none;
+    cursor:default;
     margin: 0px 15px;
   }
+  .missed-tile{
+    width: full;
+    height: full;
+    border: 1px solid #b4b4ff;
+    background-color: #fafad2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 12px;
+  }
+  .hitted-tile{
+    width: full;
+    height: full;
+    border: 1px solid #b4b4ff;
+    background-color: #fff2f2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 12px;
+  }
+
 </style>
