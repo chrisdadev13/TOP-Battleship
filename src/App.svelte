@@ -3,54 +3,63 @@
   import EnemyBoardUi from "./components/EnemyBoardUI.svelte";
   import Gameboard from "./scripts/gameboard";
   import Ship from './scripts/ship';
+  import Player from './scripts/player';
 
   let userBoard = new Gameboard;
   let computerBoard = new Gameboard;
-  let userTurn = false;
+
+  let turn = false;
   let started = false;
+  let player = new Player(turn, true);
+  let computer = new Player(false, false);
 
   const hideBtn = () => {
     document.querySelector("#init-btn-container").remove();
-    userTurn = true;
-    started = true;
+    document.querySelector("#ship-container").remove();
+    player.setTurn()
     computerBoard.placeRandomly();
     computerBoard = computerBoard;
+    started = true;
+    turn = true;
+  }
+
+  const randomBoard = () => {
+    document.querySelector("#init-btn-container").remove();
+    document.querySelector("#ship-container").remove();
+    userBoard.placeRandomly();
+    userBoard = userBoard;
+    started = true;
+    turn = true;
   }
 
   const userAttack = (event) => {
-    if(userTurn == true){
-      let row = parseInt(event.target.getAttribute("data-row"));  
-      let col = parseInt(event.target.getAttribute("data-col"));
-      if(computerBoard.board[row][col] == 0 || computerBoard.board[row][col] == 1 || typeof computerBoard.board[row][col] == "object"){
-        computerBoard.receiveAttack(row, col);
-        computerBoard = computerBoard;
-        userTurn = false;
-      }else{
-        userTurn = true;
-      }
-    }
+    let row = parseInt(event.target.getAttribute("data-row"));
+    let col = parseInt(event.target.getAttribute("data-col"));
+    if(turn == true)
+      player.userAttack(computerBoard, row, col);
+      computerBoard = computerBoard;
+      turn = false;
   }
 
   const computerAttack = () => {
-    let row = Math.floor(Math.random() * 10);
-    let col = Math.floor(Math.random() * 10);
-
     if(started == true){
-      if(userTurn == false){
-        userBoard.receiveAttack(row, col)
-        userBoard = userBoard;
-        userTurn = true;
+      if(turn == false){
+        computerAttack
       }
     }
   }
 
-  $: if(userTurn == false){
-    computerAttack();
+  $:if(started == true){
+      if(turn == false){
+        computer.computerAttack(userBoard);
+      }
   }
+
+  $:console.log(turn);
 </script>
 
 <main>
-  <BoardUI board={userBoard} hideBtn={hideBtn}/>
+  <BoardUI board={userBoard} randomBoard={randomBoard} hideBtn={hideBtn}/>
   <EnemyBoardUi board={computerBoard} attackBoard={(event) => userAttack(event)} />
 </main>
 
