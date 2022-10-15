@@ -11,6 +11,7 @@
   let turn = false;
   let started = false;
   let finish = false;
+  let winner = "";
   let player = new Player(turn, true);
   let computer = new Player(false, false);
 
@@ -37,7 +38,7 @@
   const userAttack = (event) => {
     let row = parseInt(event.target.getAttribute("data-row"));
     let col = parseInt(event.target.getAttribute("data-col"));
-    if(turn == true && computerBoard.endGame() == false && userBoard.endGame() == false)
+    if(turn == true && (computerBoard.endGame() == false && userBoard.endGame() == false))
       player.userAttack(computerBoard, row, col);
       computerBoard = computerBoard;
       turn = false;
@@ -55,7 +56,13 @@
 
   $:if(userBoard.endGame() == true || computerBoard.endGame() == true){
     finish = true;
+    if(computerBoard.endGame() == true){
+      winner = "User";
+    }else if(userBoard.endGame() == true){
+      winner = "Computer";
+    }
   }
+
 </script>
 
 <main>
@@ -64,6 +71,19 @@
     <BoardUI board={userBoard} randomBoard={randomBoard} hideBtn={hideBtn}/>
     <EnemyBoardUi board={computerBoard} attackBoard={(event) => userAttack(event)} />
   </div>
+  {#if finish == true}
+    {#if winner == "User"}
+      <div style="display: flex; flex-direction: column;">
+        <h2>We have a winner</h2>
+        <p>Congratulations you are the winner</p>
+      </div>
+    {:else if winner == "Computer"}
+      <div style="display: flex; flex-direction: column;">
+        <h2>You lose</h2>
+        <p>Congratulations to the robots!!</p>
+      </div>
+    {/if}
+  {/if}
 </main>
 
 <style>

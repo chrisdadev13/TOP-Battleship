@@ -28,8 +28,7 @@ export default class Gameboard{
         }
       }
     }
-    console.log(hitCounter);
-    return hitCounter == 14 ? true : false;
+    return hitCounter == 15 ? true : false;
   }
 
   receiveAttack(row: number, col: number){
@@ -45,7 +44,7 @@ export default class Gameboard{
       }
     }
     else{
-      console.log("You can't attack here");
+      return 0;
     }
   }
 
