@@ -478,8 +478,7 @@ var app = (function () {
                     }
                 }
             }
-            console.log(hitCounter);
-            return hitCounter == 14 ? true : false;
+            return hitCounter == 15 ? true : false;
         }
         receiveAttack(row, col) {
             if (this.board[row][col] == 0 || this.board[row][col] == 1)
@@ -495,7 +494,7 @@ var app = (function () {
                 }
             }
             else {
-                console.log("You can't attack here");
+                return 0;
             }
         }
         placeShip(ship, row, col, vertical) {
@@ -892,7 +891,7 @@ var app = (function () {
     }
 
     // (9:0) {#if vertical == true}
-    function create_if_block$2(ctx) {
+    function create_if_block$3(ctx) {
     	let div1;
     	let div0;
     	let div0_id_value;
@@ -900,8 +899,8 @@ var app = (function () {
     	let dispose;
 
     	function select_block_type_1(ctx, dirty) {
-    		if (/*count*/ ctx[4] == 0) return create_if_block_1$2;
-    		if (/*count*/ ctx[4] == 1) return create_if_block_2$1;
+    		if (/*count*/ ctx[4] == 0) return create_if_block_1$3;
+    		if (/*count*/ ctx[4] == 1) return create_if_block_2$2;
     		if (/*count*/ ctx[4] == 2) return create_if_block_3$1;
     		if (/*count*/ ctx[4] == 3) return create_if_block_4;
     		if (/*count*/ ctx[4] == 4) return create_if_block_5;
@@ -967,7 +966,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block$2.name,
+    		id: create_if_block$3.name,
     		type: "if",
     		source: "(9:0) {#if vertical == true}",
     		ctx
@@ -1671,7 +1670,7 @@ var app = (function () {
     }
 
     // (22:29) 
-    function create_if_block_2$1(ctx) {
+    function create_if_block_2$2(ctx) {
     	let each_1_anchor;
     	let each_value_1 = new Array(/*ships*/ ctx[0][/*count*/ ctx[4]].longitude);
     	validate_each_argument(each_value_1);
@@ -1729,7 +1728,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_2$1.name,
+    		id: create_if_block_2$2.name,
     		type: "if",
     		source: "(22:29) ",
     		ctx
@@ -1739,7 +1738,7 @@ var app = (function () {
     }
 
     // (18:8) {#if count == 0}
-    function create_if_block_1$2(ctx) {
+    function create_if_block_1$3(ctx) {
     	let each_1_anchor;
     	let each_value = new Array(/*ships*/ ctx[0][/*count*/ ctx[4]].longitude);
     	validate_each_argument(each_value);
@@ -1797,7 +1796,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_1$2.name,
+    		id: create_if_block_1$3.name,
     		type: "if",
     		source: "(18:8) {#if count == 0}",
     		ctx
@@ -1960,7 +1959,7 @@ var app = (function () {
     	let if_block_anchor;
 
     	function select_block_type(ctx, dirty) {
-    		if (/*vertical*/ ctx[1] == true) return create_if_block$2;
+    		if (/*vertical*/ ctx[1] == true) return create_if_block$3;
     		return create_else_block;
     	}
 
@@ -2171,7 +2170,7 @@ var app = (function () {
     }
 
     // (109:69) 
-    function create_if_block_1$1(ctx) {
+    function create_if_block_1$2(ctx) {
     	let div;
 
     	const block = {
@@ -2193,7 +2192,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_1$1.name,
+    		id: create_if_block_1$2.name,
     		type: "if",
     		source: "(109:69) ",
     		ctx
@@ -2203,7 +2202,7 @@ var app = (function () {
     }
 
     // (100:8) {#if typeof board.board[rowIndex][colIndex] !== "object"}
-    function create_if_block$1(ctx) {
+    function create_if_block$2(ctx) {
     	let div;
     	let t0_value = changeTileText(/*board*/ ctx[0].board[/*rowIndex*/ ctx[26]][/*colIndex*/ ctx[28]]) + "";
     	let t0;
@@ -2254,7 +2253,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block$1.name,
+    		id: create_if_block$2.name,
     		type: "if",
     		source: "(100:8) {#if typeof board.board[rowIndex][colIndex] !== \\\"object\\\"}",
     		ctx
@@ -2268,8 +2267,8 @@ var app = (function () {
     	let if_block_anchor;
 
     	function select_block_type(ctx, dirty) {
-    		if (typeof /*board*/ ctx[0].board[/*rowIndex*/ ctx[26]][/*colIndex*/ ctx[28]] !== "object") return create_if_block$1;
-    		if (typeof /*board*/ ctx[0].board[/*rowIndex*/ ctx[26]][/*colIndex*/ ctx[28]] == "object") return create_if_block_1$1;
+    		if (typeof /*board*/ ctx[0].board[/*rowIndex*/ ctx[26]][/*colIndex*/ ctx[28]] !== "object") return create_if_block$2;
+    		if (typeof /*board*/ ctx[0].board[/*rowIndex*/ ctx[26]][/*colIndex*/ ctx[28]] == "object") return create_if_block_1$2;
     	}
 
     	let current_block_type = select_block_type(ctx);
@@ -2960,7 +2959,7 @@ var app = (function () {
     }
 
     // (28:62) 
-    function create_if_block_2(ctx) {
+    function create_if_block_2$1(ctx) {
     	let div;
 
     	const block = {
@@ -2983,7 +2982,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_2.name,
+    		id: create_if_block_2$1.name,
     		type: "if",
     		source: "(28:62) ",
     		ctx
@@ -2993,7 +2992,7 @@ var app = (function () {
     }
 
     // (20:109) 
-    function create_if_block_1(ctx) {
+    function create_if_block_1$1(ctx) {
     	let div;
     	let mounted;
     	let dispose;
@@ -3024,7 +3023,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_1.name,
+    		id: create_if_block_1$1.name,
     		type: "if",
     		source: "(20:109) ",
     		ctx
@@ -3034,7 +3033,7 @@ var app = (function () {
     }
 
     // (12:8) {#if board.board[rowIndex][colIndex] == 0}
-    function create_if_block(ctx) {
+    function create_if_block$1(ctx) {
     	let div;
     	let mounted;
     	let dispose;
@@ -3065,7 +3064,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block.name,
+    		id: create_if_block$1.name,
     		type: "if",
     		source: "(12:8) {#if board.board[rowIndex][colIndex] == 0}",
     		ctx
@@ -3079,9 +3078,9 @@ var app = (function () {
     	let if_block_anchor;
 
     	function select_block_type(ctx, dirty) {
-    		if (/*board*/ ctx[0].board[/*rowIndex*/ ctx[6]][/*colIndex*/ ctx[9]] == 0) return create_if_block;
-    		if (/*board*/ ctx[0].board[/*rowIndex*/ ctx[6]][/*colIndex*/ ctx[9]] == 1 || typeof /*board*/ ctx[0].board[/*rowIndex*/ ctx[6]][/*colIndex*/ ctx[9]] == "object") return create_if_block_1;
-    		if (/*board*/ ctx[0].board[/*rowIndex*/ ctx[6]][/*colIndex*/ ctx[9]] == "Missed") return create_if_block_2;
+    		if (/*board*/ ctx[0].board[/*rowIndex*/ ctx[6]][/*colIndex*/ ctx[9]] == 0) return create_if_block$1;
+    		if (/*board*/ ctx[0].board[/*rowIndex*/ ctx[6]][/*colIndex*/ ctx[9]] == 1 || typeof /*board*/ ctx[0].board[/*rowIndex*/ ctx[6]][/*colIndex*/ ctx[9]] == "object") return create_if_block_1$1;
+    		if (/*board*/ ctx[0].board[/*rowIndex*/ ctx[6]][/*colIndex*/ ctx[9]] == "Missed") return create_if_block_2$1;
     		if (/*board*/ ctx[0].board[/*rowIndex*/ ctx[6]][/*colIndex*/ ctx[9]] == "Hitted") return create_if_block_3;
     	}
 
@@ -3391,6 +3390,148 @@ var app = (function () {
     /* src/App.svelte generated by Svelte v3.50.1 */
     const file = "src/App.svelte";
 
+    // (65:2) {#if finish == true}
+    function create_if_block(ctx) {
+    	let if_block_anchor;
+
+    	function select_block_type(ctx, dirty) {
+    		if (/*winner*/ ctx[3] == "User") return create_if_block_1;
+    		if (/*winner*/ ctx[3] == "Computer") return create_if_block_2;
+    	}
+
+    	let current_block_type = select_block_type(ctx);
+    	let if_block = current_block_type && current_block_type(ctx);
+
+    	const block = {
+    		c: function create() {
+    			if (if_block) if_block.c();
+    			if_block_anchor = empty();
+    		},
+    		m: function mount(target, anchor) {
+    			if (if_block) if_block.m(target, anchor);
+    			insert_dev(target, if_block_anchor, anchor);
+    		},
+    		p: function update(ctx, dirty) {
+    			if (current_block_type !== (current_block_type = select_block_type(ctx))) {
+    				if (if_block) if_block.d(1);
+    				if_block = current_block_type && current_block_type(ctx);
+
+    				if (if_block) {
+    					if_block.c();
+    					if_block.m(if_block_anchor.parentNode, if_block_anchor);
+    				}
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (if_block) {
+    				if_block.d(detaching);
+    			}
+
+    			if (detaching) detach_dev(if_block_anchor);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block.name,
+    		type: "if",
+    		source: "(65:2) {#if finish == true}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (71:35) 
+    function create_if_block_2(ctx) {
+    	let div;
+    	let h2;
+    	let t1;
+    	let p;
+
+    	const block = {
+    		c: function create() {
+    			div = element("div");
+    			h2 = element("h2");
+    			h2.textContent = "You lose";
+    			t1 = space();
+    			p = element("p");
+    			p.textContent = "Congratulations to the robots!!";
+    			attr_dev(h2, "class", "svelte-j31s19");
+    			add_location(h2, file, 72, 8, 2410);
+    			add_location(p, file, 73, 8, 2436);
+    			set_style(div, "display", "flex");
+    			set_style(div, "flex-direction", "column");
+    			attr_dev(div, "class", "svelte-j31s19");
+    			add_location(div, file, 71, 6, 2349);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+    			append_dev(div, h2);
+    			append_dev(div, t1);
+    			append_dev(div, p);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_2.name,
+    		type: "if",
+    		source: "(71:35) ",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (66:4) {#if winner == "User"}
+    function create_if_block_1(ctx) {
+    	let div;
+    	let h2;
+    	let t1;
+    	let p;
+
+    	const block = {
+    		c: function create() {
+    			div = element("div");
+    			h2 = element("h2");
+    			h2.textContent = "We have a winner";
+    			t1 = space();
+    			p = element("p");
+    			p.textContent = "Congratulations you are the winner";
+    			attr_dev(h2, "class", "svelte-j31s19");
+    			add_location(h2, file, 67, 8, 2218);
+    			add_location(p, file, 68, 8, 2252);
+    			set_style(div, "display", "flex");
+    			set_style(div, "flex-direction", "column");
+    			attr_dev(div, "class", "svelte-j31s19");
+    			add_location(div, file, 66, 6, 2157);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+    			append_dev(div, h2);
+    			append_dev(div, t1);
+    			append_dev(div, p);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_1.name,
+    		type: "if",
+    		source: "(66:4) {#if winner == \\\"User\\\"}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
     function create_fragment(ctx) {
     	let main;
     	let h2;
@@ -3399,13 +3540,14 @@ var app = (function () {
     	let boardui;
     	let t2;
     	let enemyboardui;
+    	let t3;
     	let current;
 
     	boardui = new BoardUI({
     			props: {
     				board: /*userBoard*/ ctx[0],
-    				randomBoard: /*randomBoard*/ ctx[3],
-    				hideBtn: /*hideBtn*/ ctx[2]
+    				randomBoard: /*randomBoard*/ ctx[5],
+    				hideBtn: /*hideBtn*/ ctx[4]
     			},
     			$$inline: true
     		});
@@ -3413,10 +3555,12 @@ var app = (function () {
     	enemyboardui = new EnemyBoardUI({
     			props: {
     				board: /*computerBoard*/ ctx[1],
-    				attackBoard: /*func*/ ctx[7]
+    				attackBoard: /*func*/ ctx[9]
     			},
     			$$inline: true
     		});
+
+    	let if_block = /*finish*/ ctx[2] == true && create_if_block(ctx);
 
     	const block = {
     		c: function create() {
@@ -3428,12 +3572,14 @@ var app = (function () {
     			create_component(boardui.$$.fragment);
     			t2 = space();
     			create_component(enemyboardui.$$.fragment);
+    			t3 = space();
+    			if (if_block) if_block.c();
     			attr_dev(h2, "class", "svelte-j31s19");
-    			add_location(h2, file, 52, 2, 1729);
+    			add_location(h2, file, 59, 2, 1901);
     			attr_dev(div, "class", "svelte-j31s19");
-    			add_location(div, file, 53, 2, 1751);
+    			add_location(div, file, 60, 2, 1923);
     			attr_dev(main, "class", "svelte-j31s19");
-    			add_location(main, file, 51, 0, 1720);
+    			add_location(main, file, 58, 0, 1892);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -3446,6 +3592,8 @@ var app = (function () {
     			mount_component(boardui, div, null);
     			append_dev(div, t2);
     			mount_component(enemyboardui, div, null);
+    			append_dev(main, t3);
+    			if (if_block) if_block.m(main, null);
     			current = true;
     		},
     		p: function update(ctx, [dirty]) {
@@ -3455,6 +3603,19 @@ var app = (function () {
     			const enemyboardui_changes = {};
     			if (dirty & /*computerBoard*/ 2) enemyboardui_changes.board = /*computerBoard*/ ctx[1];
     			enemyboardui.$set(enemyboardui_changes);
+
+    			if (/*finish*/ ctx[2] == true) {
+    				if (if_block) {
+    					if_block.p(ctx, dirty);
+    				} else {
+    					if_block = create_if_block(ctx);
+    					if_block.c();
+    					if_block.m(main, null);
+    				}
+    			} else if (if_block) {
+    				if_block.d(1);
+    				if_block = null;
+    			}
     		},
     		i: function intro(local) {
     			if (current) return;
@@ -3471,6 +3632,7 @@ var app = (function () {
     			if (detaching) detach_dev(main);
     			destroy_component(boardui);
     			destroy_component(enemyboardui);
+    			if (if_block) if_block.d();
     		}
     	};
 
@@ -3493,6 +3655,7 @@ var app = (function () {
     	let turn = false;
     	let started = false;
     	let finish = false;
+    	let winner = "";
     	let player = new Player(turn, true);
     	let computer = new Player(false, false);
 
@@ -3501,8 +3664,8 @@ var app = (function () {
     		document.querySelector("#ship-container").remove();
     		computerBoard.placeRandomly();
     		$$invalidate(1, computerBoard);
-    		$$invalidate(6, started = true);
-    		$$invalidate(5, turn = true);
+    		$$invalidate(8, started = true);
+    		$$invalidate(7, turn = true);
     	};
 
     	const randomBoard = () => {
@@ -3512,22 +3675,22 @@ var app = (function () {
     		$$invalidate(0, userBoard);
     		computerBoard.placeRandomly();
     		$$invalidate(1, computerBoard);
-    		$$invalidate(6, started = true);
-    		$$invalidate(5, turn = true);
+    		$$invalidate(8, started = true);
+    		$$invalidate(7, turn = true);
     	};
 
     	const userAttack = event => {
     		let row = parseInt(event.target.getAttribute("data-row"));
     		let col = parseInt(event.target.getAttribute("data-col"));
-    		if (turn == true && computerBoard.endGame() == false && userBoard.endGame() == false) player.userAttack(computerBoard, row, col);
+    		if (turn == true && (computerBoard.endGame() == false && userBoard.endGame() == false)) player.userAttack(computerBoard, row, col);
     		$$invalidate(1, computerBoard);
-    		$$invalidate(5, turn = false);
+    		$$invalidate(7, turn = false);
     	};
 
     	const computerAttack = () => {
     		computer.computerAttack(userBoard, turn);
     		$$invalidate(0, userBoard);
-    		$$invalidate(5, turn = true);
+    		$$invalidate(7, turn = true);
     	};
 
     	const writable_props = [];
@@ -3548,6 +3711,7 @@ var app = (function () {
     		turn,
     		started,
     		finish,
+    		winner,
     		player,
     		computer,
     		hideBtn,
@@ -3559,9 +3723,10 @@ var app = (function () {
     	$$self.$inject_state = $$props => {
     		if ('userBoard' in $$props) $$invalidate(0, userBoard = $$props.userBoard);
     		if ('computerBoard' in $$props) $$invalidate(1, computerBoard = $$props.computerBoard);
-    		if ('turn' in $$props) $$invalidate(5, turn = $$props.turn);
-    		if ('started' in $$props) $$invalidate(6, started = $$props.started);
-    		if ('finish' in $$props) finish = $$props.finish;
+    		if ('turn' in $$props) $$invalidate(7, turn = $$props.turn);
+    		if ('started' in $$props) $$invalidate(8, started = $$props.started);
+    		if ('finish' in $$props) $$invalidate(2, finish = $$props.finish);
+    		if ('winner' in $$props) $$invalidate(3, winner = $$props.winner);
     		if ('player' in $$props) player = $$props.player;
     		if ('computer' in $$props) computer = $$props.computer;
     	};
@@ -3571,7 +3736,7 @@ var app = (function () {
     	}
 
     	$$self.$$.update = () => {
-    		if ($$self.$$.dirty & /*started, turn, userBoard*/ 97) {
+    		if ($$self.$$.dirty & /*started, turn, userBoard*/ 385) {
     			if (started == true && turn == false && userBoard.endGame() == false && userBoard.endGame() == false) {
     				computerAttack();
     			}
@@ -3579,7 +3744,13 @@ var app = (function () {
 
     		if ($$self.$$.dirty & /*userBoard, computerBoard*/ 3) {
     			if (userBoard.endGame() == true || computerBoard.endGame() == true) {
-    				finish = true;
+    				$$invalidate(2, finish = true);
+
+    				if (computerBoard.endGame() == true) {
+    					$$invalidate(3, winner = "User");
+    				} else if (userBoard.endGame() == true) {
+    					$$invalidate(3, winner = "Computer");
+    				}
     			}
     		}
     	};
@@ -3587,6 +3758,8 @@ var app = (function () {
     	return [
     		userBoard,
     		computerBoard,
+    		finish,
+    		winner,
     		hideBtn,
     		randomBoard,
     		userAttack,
