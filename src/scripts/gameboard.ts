@@ -19,6 +19,19 @@ export default class Gameboard{
     }
   }
 
+  endGame(){
+    let hitCounter = 0;
+    for(let row = 0; row < BOARD_SIZE; row++){
+      for(let col = 0; col < BOARD_SIZE; col++){
+        if(this.board[row][col] == "Hitted"){
+          hitCounter++;
+        }
+      }
+    }
+    console.log(hitCounter);
+    return hitCounter == 14 ? true : false;
+  }
+
   receiveAttack(row: number, col: number){
     if(this.board[row][col] == 0 || this.board[row][col] == 1)
       this.board[row][col] = "Missed"; 
@@ -280,7 +293,7 @@ export default class Gameboard{
     while(counter < 5){
       let row = Math.floor(Math.random() * 10);
       let col = Math.floor(Math.random() * 10);
-      let vertical = Math.floor(Math.random * 2) == 1 ? true : false;
+      let vertical = Math.floor(Math.random() * 2) == 1 ? true : false;
 
       if(this.placeShip(ships[counter], row, col, vertical) == true){
         counter++;

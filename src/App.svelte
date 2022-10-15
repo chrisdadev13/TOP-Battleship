@@ -10,13 +10,13 @@
 
   let turn = false;
   let started = false;
+  let finish = false;
   let player = new Player(turn, true);
   let computer = new Player(false, false);
 
   const hideBtn = () => {
     document.querySelector("#init-btn-container").remove();
     document.querySelector("#ship-container").remove();
-    player.setTurn()
     computerBoard.placeRandomly();
     computerBoard = computerBoard;
     started = true;
@@ -28,6 +28,8 @@
     document.querySelector("#ship-container").remove();
     userBoard.placeRandomly();
     userBoard = userBoard;
+    computerBoard.placeRandomly();
+    computerBoard = computerBoard;
     started = true;
     turn = true;
   }
@@ -35,38 +37,49 @@
   const userAttack = (event) => {
     let row = parseInt(event.target.getAttribute("data-row"));
     let col = parseInt(event.target.getAttribute("data-col"));
-    if(turn == true)
+    if(turn == true && computerBoard.endGame() == false && userBoard.endGame() == false)
       player.userAttack(computerBoard, row, col);
       computerBoard = computerBoard;
       turn = false;
   }
 
   const computerAttack = () => {
-    if(started == true){
-      if(turn == false){
-        computerAttack
-      }
+    computer.computerAttack(userBoard, turn);
+    userBoard = userBoard;
+    turn = true;
+  }
+
+  $:if(started == true && turn == false && userBoard.endGame() == false && userBoard.endGame() == false){
+        computerAttack()
     }
-  }
 
-  $:if(started == true){
-      if(turn == false){
-        computer.computerAttack(userBoard);
-      }
+  $:if(userBoard.endGame() == true || computerBoard.endGame() == true){
+    finish = true;
   }
-
-  $:console.log(turn);
 </script>
 
 <main>
-  <BoardUI board={userBoard} randomBoard={randomBoard} hideBtn={hideBtn}/>
-  <EnemyBoardUi board={computerBoard} attackBoard={(event) => userAttack(event)} />
+  <h2>Battleship</h2>
+  <div>
+    <BoardUI board={userBoard} randomBoard={randomBoard} hideBtn={hideBtn}/>
+    <EnemyBoardUi board={computerBoard} attackBoard={(event) => userAttack(event)} />
+  </div>
 </main>
 
 <style>
   main{
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
+    margin-top: 15vh;
+  }
+  div{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  h2{
+    font-size: 36px;
   }
 </style>

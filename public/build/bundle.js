@@ -411,18 +411,47 @@ var app = (function () {
     }
 
     class Ship {
-        constructor(longitude, hitted, sunk = false) {
+        constructor(longitude, hitCounter, sunk, coordinates) {
             this.longitude = longitude;
-            this.hitted = hitted;
-            this.sunk = sunk;
+            this.hitCounter = hitCounter;
+            this.sunk = hitCounter == longitude ? true : false;
+            this.coordinates = coordinates;
         }
-        hit(target) {
-            if (target == 'Hitted') {
-                this.hitted.push(target);
+        positionX(direction = false, row, col) {
+            this.initialRow = row;
+            for (let i = 0; i < this.longitude; i++) {
+                this.coordinates.push(col + i);
+            }
+        }
+        positionY(direction = true, row, col) {
+            this.initialCol = col;
+            for (let i = 0; i < this.longitude; i++) {
+                this.coordinates.push(row + i);
+            }
+        }
+        hitX(row, col) {
+            if (row == this.initialRow) {
+                for (let i = 0; i < this.coordinates.length; i++) {
+                    if (col == this.coordinates[i]) {
+                        this.hitCounter++;
+                    }
+                }
+            }
+        }
+        hitY(row, col) {
+            if (col == this.initialCol) {
+                for (let i = 0; i < this.coordinates.length; i++) {
+                    if (row == this.coordinates[i]) {
+                        this.hitCounter++;
+                    }
+                }
             }
         }
         isSunk() {
-            return this.longitude == this.hitted.length ? true : false;
+            if (this.hitCounter == this.longitude) {
+                this.sunk = true;
+                return this.sunk;
+            }
         }
     }
 
@@ -440,11 +469,34 @@ var app = (function () {
                 }
             }
         }
+        endGame() {
+            let hitCounter = 0;
+            for (let row = 0; row < BOARD_SIZE; row++) {
+                for (let col = 0; col < BOARD_SIZE; col++) {
+                    if (this.board[row][col] == "Hitted") {
+                        hitCounter++;
+                    }
+                }
+            }
+            console.log(hitCounter);
+            return hitCounter == 14 ? true : false;
+        }
         receiveAttack(row, col) {
-            if (this.board[row][col] == 0)
-                this.board[row][col] = "X";
-            else if (typeof this.board[row][col] == 'object')
-                this.board[row][col] = "Hitted";
+            if (this.board[row][col] == 0 || this.board[row][col] == 1)
+                this.board[row][col] = "Missed";
+            else if (typeof this.board[row][col] == 'object') {
+                if (this.board[row][col].initialCol == undefined) {
+                    this.board[row][col].hitX(row, col);
+                    this.board[row][col] = "Hitted";
+                }
+                else {
+                    this.board[row][col].hitY(row, col);
+                    this.board[row][col] = "Hitted";
+                }
+            }
+            else {
+                console.log("You can't attack here");
+            }
         }
         placeShip(ship, row, col, vertical) {
             if (vertical == true && this.isShipPlaceable(ship, row, col, vertical) == true) {
@@ -452,6 +504,7 @@ var app = (function () {
                     this.board[row + i][col] = ship;
                 }
                 this.enableShipPlace(ship, row, col, vertical);
+                ship.positionY(vertical, row, col);
                 return true;
             }
             else if (vertical == false && this.isShipPlaceable(ship, row, col, vertical) == true) {
@@ -459,6 +512,7 @@ var app = (function () {
                     this.board[row][col + i] = ship;
                 }
                 this.enableShipPlace(ship, row, col, vertical);
+                ship.positionX(vertical, row, col);
                 return true;
             }
         }
@@ -663,81 +717,28 @@ var app = (function () {
                 return true;
             }
         }
-        placeShipRandomly() {
+        placeRandomly() {
+            let carrier = new Ship(4, 0, false, []);
+            let battleship = new Ship(4, 0, false, []);
+            let cruiser = new Ship(3, 0, false, []);
+            let submarine = new Ship(2, 0, false, []);
+            let patrol = new Ship(2, 0, false, []);
+            let ships = [
+                carrier,
+                battleship,
+                cruiser,
+                submarine,
+                patrol
+            ];
             let counter = 0;
-            let carrier = new Ship(4, [], false);
-            let battleship = new Ship(4, [], false);
-            let cruiser = new Ship(3, [], false);
-            let submarine = new Ship(2, [], false);
-            let patrol = new Ship(2, [], false);
-            let row;
-            let col;
-            let verticalSelector;
-            let vertical;
-            do {
-                verticalSelector = Math.random();
-                vertical = verticalSelector > 0.5 ? true : false;
-                row = Math.floor(Math.random() * (9 - 0 + 1)) + 0;
-                col = Math.floor(Math.random() * (9 - 0 + 1)) + 0;
-                switch (counter) {
-                    case 0:
-                        if (this.board[row][col] != 0) {
-                            while (this.board[row][col] != 0) {
-                                row = Math.floor(Math.random() * (9 + 1));
-                                col = Math.floor(Math.random() * (9 + 1));
-                            }
-                            this.placeShip(carrier, row, col, vertical);
-                        }
-                        else {
-                            this.placeShip(carrier, row, col, vertical);
-                        }
-                    case 1:
-                        if (this.board[row][col] != 0) {
-                            while (this.board[row][col] != 0) {
-                                row = Math.floor(Math.random() * (9 + 1));
-                                col = Math.floor(Math.random() * (9 + 1));
-                            }
-                            this.placeShip(battleship, row, col, vertical);
-                        }
-                        else {
-                            this.placeShip(battleship, row, col, vertical);
-                        }
-                    case 2:
-                        if (this.board[row][col] != 0) {
-                            while (this.board[row][col] != 0) {
-                                row = Math.floor(Math.random() * (9 + 1));
-                                col = Math.floor(Math.random() * (9 + 1));
-                            }
-                            this.placeShip(cruiser, row, col, vertical);
-                        }
-                        else {
-                            this.placeShip(cruiser, row, col, vertical);
-                        }
-                    case 3:
-                        if (this.board[row][col] != 0) {
-                            while (this.board[row][col] != 0) {
-                                row = Math.floor(Math.random() * (9 + 1));
-                                col = Math.floor(Math.random() * (9 + 1));
-                            }
-                            this.placeShip(submarine, row, col, vertical);
-                        }
-                        else {
-                            this.placeShip(submarine, row, col, vertical);
-                        }
-                    case 4:
-                        if (this.board[row][col] != 0) {
-                            while (this.board[row][col] != 0) {
-                                row = Math.floor(Math.random() * (9 + 1));
-                                col = Math.floor(Math.random() * (9 + 1));
-                            }
-                            this.placeShip(patrol, row, col, vertical);
-                        }
-                        else {
-                            this.placeShip(patrol, row, col, vertical);
-                        }
+            while (counter < 5) {
+                let row = Math.floor(Math.random() * 10);
+                let col = Math.floor(Math.random() * 10);
+                let vertical = Math.floor(Math.random() * 2) == 1 ? true : false;
+                if (this.placeShip(ships[counter], row, col, vertical) == true) {
+                    counter++;
                 }
-                counter++;
-            } while (counter < 6);
+            }
         }
     }
 
@@ -2151,53 +2152,40 @@ var app = (function () {
     }
 
     /* src/components/BoardUI.svelte generated by Svelte v3.50.1 */
+
+    const { console: console_1 } = globals;
     const file$2 = "src/components/BoardUI.svelte";
 
     function get_each_context$1(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[5] = list[i];
-    	child_ctx[22] = i;
+    	child_ctx[8] = list[i];
+    	child_ctx[26] = i;
     	return child_ctx;
     }
 
     function get_each_context_1$1(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[15] = list[i];
-    	child_ctx[24] = i;
+    	child_ctx[19] = list[i];
+    	child_ctx[28] = i;
     	return child_ctx;
     }
 
-    // (86:69) 
+    // (109:69) 
     function create_if_block_1$1(ctx) {
     	let div;
-
-    	let t0_value = (/*board*/ ctx[0].board[/*rowIndex*/ ctx[22]][/*colIndex*/ ctx[24]] == "Hitted"
-    	? "X"
-    	: "") + "";
-
-    	let t0;
-    	let t1;
 
     	const block = {
     		c: function create() {
     			div = element("div");
-    			t0 = text(t0_value);
-    			t1 = space();
-    			attr_dev(div, "class", "ship-tile svelte-gr7vdb");
-    			attr_dev(div, "data-row", /*rowIndex*/ ctx[22]);
-    			attr_dev(div, "data-col", /*colIndex*/ ctx[24]);
-    			add_location(div, file$2, 86, 10, 2329);
+    			attr_dev(div, "class", "" + (null_to_empty("ship-tile") + " svelte-16irka3"));
+    			attr_dev(div, "data-row", /*rowIndex*/ ctx[26]);
+    			attr_dev(div, "data-col", /*colIndex*/ ctx[28]);
+    			add_location(div, file$2, 109, 10, 2975);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
-    			append_dev(div, t0);
-    			append_dev(div, t1);
     		},
-    		p: function update(ctx, dirty) {
-    			if (dirty & /*board*/ 1 && t0_value !== (t0_value = (/*board*/ ctx[0].board[/*rowIndex*/ ctx[22]][/*colIndex*/ ctx[24]] == "Hitted"
-    			? "X"
-    			: "") + "")) set_data_dev(t0, t0_value);
-    		},
+    		p: noop,
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(div);
     		}
@@ -2207,21 +2195,17 @@ var app = (function () {
     		block,
     		id: create_if_block_1$1.name,
     		type: "if",
-    		source: "(86:69) ",
+    		source: "(109:69) ",
     		ctx
     	});
 
     	return block;
     }
 
-    // (77:8) {#if typeof board.board[rowIndex][colIndex] != "object"}
+    // (100:8) {#if typeof board.board[rowIndex][colIndex] !== "object"}
     function create_if_block$1(ctx) {
     	let div;
-
-    	let t0_value = (/*board*/ ctx[0].board[/*rowIndex*/ ctx[22]][/*colIndex*/ ctx[24]] == "Hitted"
-    	? "X"
-    	: "") + "";
-
+    	let t0_value = changeTileText(/*board*/ ctx[0].board[/*rowIndex*/ ctx[26]][/*colIndex*/ ctx[28]]) + "";
     	let t0;
     	let t1;
     	let div_class_value;
@@ -2234,13 +2218,13 @@ var app = (function () {
     			t0 = text(t0_value);
     			t1 = space();
 
-    			attr_dev(div, "class", div_class_value = "" + (null_to_empty(/*board*/ ctx[0].board[/*rowIndex*/ ctx[22]][/*colIndex*/ ctx[24]] == 1 && /*dragging*/ ctx[2] == true
+    			attr_dev(div, "class", div_class_value = "" + (null_to_empty(/*board*/ ctx[0].board[/*rowIndex*/ ctx[26]][/*colIndex*/ ctx[28]] == 1 && /*dragging*/ ctx[4] == true
     			? "enable-tile"
-    			: "empty-tile") + " svelte-gr7vdb"));
+    			: changeTileColor(/*board*/ ctx[0].board[/*rowIndex*/ ctx[26]][/*colIndex*/ ctx[28]])) + " svelte-16irka3"));
 
-    			attr_dev(div, "data-row", /*rowIndex*/ ctx[22]);
-    			attr_dev(div, "data-col", /*colIndex*/ ctx[24]);
-    			add_location(div, file$2, 77, 10, 1911);
+    			attr_dev(div, "data-row", /*rowIndex*/ ctx[26]);
+    			attr_dev(div, "data-col", /*colIndex*/ ctx[28]);
+    			add_location(div, file$2, 100, 10, 2532);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -2248,18 +2232,16 @@ var app = (function () {
     			append_dev(div, t1);
 
     			if (!mounted) {
-    				dispose = listen_dev(div, "dragover", /*dragover_handler*/ ctx[14], false, false, false);
+    				dispose = listen_dev(div, "dragover", /*dragover_handler*/ ctx[18], false, false, false);
     				mounted = true;
     			}
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*board*/ 1 && t0_value !== (t0_value = (/*board*/ ctx[0].board[/*rowIndex*/ ctx[22]][/*colIndex*/ ctx[24]] == "Hitted"
-    			? "X"
-    			: "") + "")) set_data_dev(t0, t0_value);
+    			if (dirty & /*board*/ 1 && t0_value !== (t0_value = changeTileText(/*board*/ ctx[0].board[/*rowIndex*/ ctx[26]][/*colIndex*/ ctx[28]]) + "")) set_data_dev(t0, t0_value);
 
-    			if (dirty & /*board, dragging*/ 5 && div_class_value !== (div_class_value = "" + (null_to_empty(/*board*/ ctx[0].board[/*rowIndex*/ ctx[22]][/*colIndex*/ ctx[24]] == 1 && /*dragging*/ ctx[2] == true
+    			if (dirty & /*board, dragging*/ 17 && div_class_value !== (div_class_value = "" + (null_to_empty(/*board*/ ctx[0].board[/*rowIndex*/ ctx[26]][/*colIndex*/ ctx[28]] == 1 && /*dragging*/ ctx[4] == true
     			? "enable-tile"
-    			: "empty-tile") + " svelte-gr7vdb"))) {
+    			: changeTileColor(/*board*/ ctx[0].board[/*rowIndex*/ ctx[26]][/*colIndex*/ ctx[28]])) + " svelte-16irka3"))) {
     				attr_dev(div, "class", div_class_value);
     			}
     		},
@@ -2274,20 +2256,20 @@ var app = (function () {
     		block,
     		id: create_if_block$1.name,
     		type: "if",
-    		source: "(77:8) {#if typeof board.board[rowIndex][colIndex] != \\\"object\\\"}",
+    		source: "(100:8) {#if typeof board.board[rowIndex][colIndex] !== \\\"object\\\"}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (76:6) {#each row as col, colIndex}
+    // (99:6) {#each row as col, colIndex}
     function create_each_block_1$1(ctx) {
     	let if_block_anchor;
 
     	function select_block_type(ctx, dirty) {
-    		if (typeof /*board*/ ctx[0].board[/*rowIndex*/ ctx[22]][/*colIndex*/ ctx[24]] != "object") return create_if_block$1;
-    		if (typeof /*board*/ ctx[0].board[/*rowIndex*/ ctx[22]][/*colIndex*/ ctx[24]] == "object") return create_if_block_1$1;
+    		if (typeof /*board*/ ctx[0].board[/*rowIndex*/ ctx[26]][/*colIndex*/ ctx[28]] !== "object") return create_if_block$1;
+    		if (typeof /*board*/ ctx[0].board[/*rowIndex*/ ctx[26]][/*colIndex*/ ctx[28]] == "object") return create_if_block_1$1;
     	}
 
     	let current_block_type = select_block_type(ctx);
@@ -2328,17 +2310,17 @@ var app = (function () {
     		block,
     		id: create_each_block_1$1.name,
     		type: "each",
-    		source: "(76:6) {#each row as col, colIndex}",
+    		source: "(99:6) {#each row as col, colIndex}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (75:4) {#each board.board as row, rowIndex}
+    // (98:4) {#each board.board as row, rowIndex}
     function create_each_block$1(ctx) {
     	let each_1_anchor;
-    	let each_value_1 = /*row*/ ctx[5];
+    	let each_value_1 = /*row*/ ctx[8];
     	validate_each_argument(each_value_1);
     	let each_blocks = [];
 
@@ -2362,8 +2344,8 @@ var app = (function () {
     			insert_dev(target, each_1_anchor, anchor);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*board, dragging, getCoordinates*/ 517) {
-    				each_value_1 = /*row*/ ctx[5];
+    			if (dirty & /*board, dragging, changeTileColor, getCoordinates, changeTileText*/ 4113) {
+    				each_value_1 = /*row*/ ctx[8];
     				validate_each_argument(each_value_1);
     				let i;
 
@@ -2396,7 +2378,7 @@ var app = (function () {
     		block,
     		id: create_each_block$1.name,
     		type: "each",
-    		source: "(75:4) {#each board.board as row, rowIndex}",
+    		source: "(98:4) {#each board.board as row, rowIndex}",
     		ctx
     	});
 
@@ -2409,17 +2391,19 @@ var app = (function () {
     	let t0;
     	let div1;
     	let p0;
-    	let t1;
-    	let p0_class_value;
     	let t2;
     	let p1;
     	let t3;
     	let p1_class_value;
     	let t4;
+    	let p2;
+    	let t5;
+    	let p2_class_value;
+    	let t6;
     	let div2;
     	let h2;
-    	let t5;
-    	let t6;
+    	let t7;
+    	let t8;
     	let shipsui;
     	let current;
     	let mounted;
@@ -2434,11 +2418,11 @@ var app = (function () {
 
     	shipsui = new ShipUI({
     			props: {
-    				ships: /*ships*/ ctx[6],
-    				vertical: /*shipVertical*/ ctx[4],
-    				onDragShip: /*dragShip*/ ctx[8],
-    				offDragShip: /*dropShip*/ ctx[10],
-    				count: /*count*/ ctx[1]
+    				ships: /*ships*/ ctx[9],
+    				vertical: /*shipVertical*/ ctx[7],
+    				onDragShip: /*dragShip*/ ctx[11],
+    				offDragShip: /*dropShip*/ ctx[13],
+    				count: /*count*/ ctx[5]
     			},
     			$$inline: true
     		});
@@ -2455,38 +2439,46 @@ var app = (function () {
     			t0 = space();
     			div1 = element("div");
     			p0 = element("p");
-    			t1 = text("Rotate");
+    			p0.textContent = "Random";
     			t2 = space();
     			p1 = element("p");
-    			t3 = text("Play");
+    			t3 = text("Rotate");
     			t4 = space();
+    			p2 = element("p");
+    			t5 = text("Play");
+    			t6 = space();
     			div2 = element("div");
     			h2 = element("h2");
-    			t5 = text(/*shipName*/ ctx[3]);
-    			t6 = space();
+    			t7 = text(/*shipName*/ ctx[6]);
+    			t8 = space();
     			create_component(shipsui.$$.fragment);
-    			attr_dev(div0, "class", "board-container svelte-gr7vdb");
-    			add_location(div0, file$2, 73, 2, 1730);
+    			attr_dev(div0, "class", "board-container svelte-16irka3");
+    			attr_dev(div0, "data-owner", /*boardOwner*/ ctx[3]);
+    			add_location(div0, file$2, 96, 2, 2326);
+    			attr_dev(p0, "class", "rotate-button svelte-16irka3");
+    			add_location(p0, file$2, 119, 4, 3219);
 
-    			attr_dev(p0, "class", p0_class_value = "" + (null_to_empty(/*count*/ ctx[1] == 5
+    			attr_dev(p1, "class", p1_class_value = "" + (null_to_empty(/*count*/ ctx[5] == 5
     			? "inactive-button"
-    			: "rotate-button") + " svelte-gr7vdb"));
+    			: "rotate-button") + " svelte-16irka3"));
 
-    			add_location(p0, file$2, 98, 4, 2635);
+    			add_location(p1, file$2, 120, 4, 3282);
 
-    			attr_dev(p1, "class", p1_class_value = "" + (null_to_empty(/*count*/ ctx[1] == 5
+    			attr_dev(p2, "class", p2_class_value = "" + (null_to_empty(/*count*/ ctx[5] == 5
     			? "rotate-button"
-    			: "inactive-button") + " svelte-gr7vdb"));
+    			: "inactive-button") + " svelte-16irka3"));
 
-    			add_location(p1, file$2, 99, 4, 2733);
+    			add_location(p2, file$2, 121, 4, 3380);
     			set_style(div1, "position", "abolute");
     			set_style(div1, "display", "flex");
-    			add_location(div1, file$2, 97, 2, 2583);
-    			attr_dev(main, "class", "container svelte-gr7vdb");
-    			add_location(main, file$2, 72, 0, 1703);
-    			add_location(h2, file$2, 104, 2, 2857);
+    			attr_dev(div1, "id", "init-btn-container");
+    			add_location(div1, file$2, 118, 2, 3143);
+    			attr_dev(main, "class", "container svelte-16irka3");
+    			add_location(main, file$2, 95, 0, 2299);
+    			add_location(h2, file$2, 126, 2, 3574);
     			set_style(div2, "text-align", "center");
-    			add_location(div2, file$2, 103, 0, 2821);
+    			attr_dev(div2, "id", "ship-container");
+    			add_location(div2, file$2, 125, 0, 3518);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -2502,25 +2494,56 @@ var app = (function () {
     			append_dev(main, t0);
     			append_dev(main, div1);
     			append_dev(div1, p0);
-    			append_dev(p0, t1);
     			append_dev(div1, t2);
     			append_dev(div1, p1);
     			append_dev(p1, t3);
-    			insert_dev(target, t4, anchor);
+    			append_dev(div1, t4);
+    			append_dev(div1, p2);
+    			append_dev(p2, t5);
+    			insert_dev(target, t6, anchor);
     			insert_dev(target, div2, anchor);
     			append_dev(div2, h2);
-    			append_dev(h2, t5);
-    			append_dev(div2, t6);
+    			append_dev(h2, t7);
+    			append_dev(div2, t8);
     			mount_component(shipsui, div2, null);
     			current = true;
 
     			if (!mounted) {
-    				dispose = listen_dev(p0, "click", /*rotateShips*/ ctx[7], false, false, false);
+    				dispose = [
+    					listen_dev(
+    						p0,
+    						"click",
+    						function () {
+    							if (is_function(/*randomBoard*/ ctx[2])) /*randomBoard*/ ctx[2].apply(this, arguments);
+    						},
+    						false,
+    						false,
+    						false
+    					),
+    					listen_dev(p1, "click", /*rotateShips*/ ctx[10], false, false, false),
+    					listen_dev(
+    						p2,
+    						"click",
+    						function () {
+    							if (is_function(/*count*/ ctx[5] != 5
+    							? click_handler
+    							: /*hideBtn*/ ctx[1])) (/*count*/ ctx[5] != 5
+    							? click_handler
+    							: /*hideBtn*/ ctx[1]).apply(this, arguments);
+    						},
+    						false,
+    						false,
+    						false
+    					)
+    				];
+
     				mounted = true;
     			}
     		},
-    		p: function update(ctx, [dirty]) {
-    			if (dirty & /*board, dragging, getCoordinates*/ 517) {
+    		p: function update(new_ctx, [dirty]) {
+    			ctx = new_ctx;
+
+    			if (dirty & /*board, dragging, changeTileColor, getCoordinates, changeTileText*/ 4113) {
     				each_value = /*board*/ ctx[0].board;
     				validate_each_argument(each_value);
     				let i;
@@ -2544,22 +2567,26 @@ var app = (function () {
     				each_blocks.length = each_value.length;
     			}
 
-    			if (!current || dirty & /*count*/ 2 && p0_class_value !== (p0_class_value = "" + (null_to_empty(/*count*/ ctx[1] == 5
-    			? "inactive-button"
-    			: "rotate-button") + " svelte-gr7vdb"))) {
-    				attr_dev(p0, "class", p0_class_value);
+    			if (!current || dirty & /*boardOwner*/ 8) {
+    				attr_dev(div0, "data-owner", /*boardOwner*/ ctx[3]);
     			}
 
-    			if (!current || dirty & /*count*/ 2 && p1_class_value !== (p1_class_value = "" + (null_to_empty(/*count*/ ctx[1] == 5
-    			? "rotate-button"
-    			: "inactive-button") + " svelte-gr7vdb"))) {
+    			if (!current || dirty & /*count*/ 32 && p1_class_value !== (p1_class_value = "" + (null_to_empty(/*count*/ ctx[5] == 5
+    			? "inactive-button"
+    			: "rotate-button") + " svelte-16irka3"))) {
     				attr_dev(p1, "class", p1_class_value);
     			}
 
-    			if (!current || dirty & /*shipName*/ 8) set_data_dev(t5, /*shipName*/ ctx[3]);
+    			if (!current || dirty & /*count*/ 32 && p2_class_value !== (p2_class_value = "" + (null_to_empty(/*count*/ ctx[5] == 5
+    			? "rotate-button"
+    			: "inactive-button") + " svelte-16irka3"))) {
+    				attr_dev(p2, "class", p2_class_value);
+    			}
+
+    			if (!current || dirty & /*shipName*/ 64) set_data_dev(t7, /*shipName*/ ctx[6]);
     			const shipsui_changes = {};
-    			if (dirty & /*shipVertical*/ 16) shipsui_changes.vertical = /*shipVertical*/ ctx[4];
-    			if (dirty & /*count*/ 2) shipsui_changes.count = /*count*/ ctx[1];
+    			if (dirty & /*shipVertical*/ 128) shipsui_changes.vertical = /*shipVertical*/ ctx[7];
+    			if (dirty & /*count*/ 32) shipsui_changes.count = /*count*/ ctx[5];
     			shipsui.$set(shipsui_changes);
     		},
     		i: function intro(local) {
@@ -2574,11 +2601,11 @@ var app = (function () {
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(main);
     			destroy_each(each_blocks, detaching);
-    			if (detaching) detach_dev(t4);
+    			if (detaching) detach_dev(t6);
     			if (detaching) detach_dev(div2);
     			destroy_component(shipsui);
     			mounted = false;
-    			dispose();
+    			run_all(dispose);
     		}
     	};
 
@@ -2593,29 +2620,61 @@ var app = (function () {
     	return block;
     }
 
+    function changeTileColor(tile) {
+    	var _a;
+
+    	const tileStyles = {
+    		0: "empty-tile",
+    		1: "empty-tile",
+    		"Hitted": "hitted-tile",
+    		"Missed": "missed-tile"
+    	};
+
+    	return (_a = tileStyles[tile]) !== null && _a !== void 0
+    	? _a
+    	: 0;
+    }
+
+    function changeTileText(tile) {
+    	var _a;
+    	const tileText = { "Hitted": "X", "Missed": "*" };
+
+    	return (_a = tileText[tile]) !== null && _a !== void 0
+    	? _a
+    	: "";
+    }
+
+    const click_handler = () => {
+    	return 0;
+    };
+
     function instance$2($$self, $$props, $$invalidate) {
     	let shipVertical;
     	let row;
     	let col;
+    	let shipDragging;
     	let shipName;
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('BoardUI', slots, []);
     	let { board } = $$props;
-    	let carrier = new Ship(4, [], false);
-    	let battleship = new Ship(4, [], false);
-    	let cruiser = new Ship(3, [], false);
-    	let submarine = new Ship(2, [], false);
-    	let patrol = new Ship(2, [], false);
+    	let { hideBtn } = $$props;
+    	let { randomBoard } = $$props;
+    	let { boardOwner } = $$props;
+    	let carrier = new Ship(4, 0, false, []);
+    	let battleship = new Ship(4, 0, false, []);
+    	let cruiser = new Ship(3, 0, false, []);
+    	let submarine = new Ship(2, 0, false, []);
+    	let patrol = new Ship(2, 0, false, []);
     	let ships = [carrier, battleship, cruiser, submarine, patrol];
     	let vertical = false;
-    	const rotateShips = () => $$invalidate(11, vertical = !vertical);
+    	const rotateShips = () => $$invalidate(14, vertical = !vertical);
     	let tileRow = 0;
     	let tileCol = 0;
     	let dragging = false;
     	let count = 0;
 
     	function dragShip(event) {
-    		$$invalidate(2, dragging = true);
+    		$$invalidate(4, dragging = true);
 
     		if (event.target.id == "0") {
     			return ships[0];
@@ -2631,36 +2690,42 @@ var app = (function () {
     	}
 
     	function getCoordinates(event) {
-    		$$invalidate(12, tileRow = parseInt(event.target.getAttribute("data-row")));
-    		$$invalidate(13, tileCol = parseInt(event.target.getAttribute("data-col")));
+    		$$invalidate(15, tileRow = parseInt(event.target.getAttribute("data-row")));
+    		$$invalidate(16, tileCol = parseInt(event.target.getAttribute("data-col")));
     	}
 
     	function dropShip(event) {
     		if (board.isShipPlaceable(dragShip(event), row, col, vertical) == true) {
     			board.placeShip(dragShip(event), row, col, vertical);
     			$$invalidate(0, board);
-    			$$invalidate(1, count++, count);
+    			$$invalidate(5, count++, count);
     		}
 
-    		$$invalidate(2, dragging = false);
+    		$$invalidate(4, dragging = false);
     	}
 
-    	const writable_props = ['board'];
+    	const writable_props = ['board', 'hideBtn', 'randomBoard', 'boardOwner'];
 
     	Object.keys($$props).forEach(key => {
-    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<BoardUI> was created with unknown prop '${key}'`);
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console_1.warn(`<BoardUI> was created with unknown prop '${key}'`);
     	});
 
     	const dragover_handler = event => getCoordinates(event);
 
     	$$self.$$set = $$props => {
     		if ('board' in $$props) $$invalidate(0, board = $$props.board);
+    		if ('hideBtn' in $$props) $$invalidate(1, hideBtn = $$props.hideBtn);
+    		if ('randomBoard' in $$props) $$invalidate(2, randomBoard = $$props.randomBoard);
+    		if ('boardOwner' in $$props) $$invalidate(3, boardOwner = $$props.boardOwner);
     	};
 
     	$$self.$capture_state = () => ({
     		Ship,
     		ShipsUI: ShipUI,
     		board,
+    		hideBtn,
+    		randomBoard,
+    		boardOwner,
     		carrier,
     		battleship,
     		cruiser,
@@ -2676,29 +2741,36 @@ var app = (function () {
     		dragShip,
     		getCoordinates,
     		dropShip,
+    		changeTileColor,
+    		changeTileText,
     		shipName,
     		col,
     		row,
+    		shipDragging,
     		shipVertical
     	});
 
     	$$self.$inject_state = $$props => {
     		if ('board' in $$props) $$invalidate(0, board = $$props.board);
+    		if ('hideBtn' in $$props) $$invalidate(1, hideBtn = $$props.hideBtn);
+    		if ('randomBoard' in $$props) $$invalidate(2, randomBoard = $$props.randomBoard);
+    		if ('boardOwner' in $$props) $$invalidate(3, boardOwner = $$props.boardOwner);
     		if ('carrier' in $$props) carrier = $$props.carrier;
     		if ('battleship' in $$props) battleship = $$props.battleship;
     		if ('cruiser' in $$props) cruiser = $$props.cruiser;
     		if ('submarine' in $$props) submarine = $$props.submarine;
     		if ('patrol' in $$props) patrol = $$props.patrol;
-    		if ('ships' in $$props) $$invalidate(6, ships = $$props.ships);
-    		if ('vertical' in $$props) $$invalidate(11, vertical = $$props.vertical);
-    		if ('tileRow' in $$props) $$invalidate(12, tileRow = $$props.tileRow);
-    		if ('tileCol' in $$props) $$invalidate(13, tileCol = $$props.tileCol);
-    		if ('dragging' in $$props) $$invalidate(2, dragging = $$props.dragging);
-    		if ('count' in $$props) $$invalidate(1, count = $$props.count);
-    		if ('shipName' in $$props) $$invalidate(3, shipName = $$props.shipName);
+    		if ('ships' in $$props) $$invalidate(9, ships = $$props.ships);
+    		if ('vertical' in $$props) $$invalidate(14, vertical = $$props.vertical);
+    		if ('tileRow' in $$props) $$invalidate(15, tileRow = $$props.tileRow);
+    		if ('tileCol' in $$props) $$invalidate(16, tileCol = $$props.tileCol);
+    		if ('dragging' in $$props) $$invalidate(4, dragging = $$props.dragging);
+    		if ('count' in $$props) $$invalidate(5, count = $$props.count);
+    		if ('shipName' in $$props) $$invalidate(6, shipName = $$props.shipName);
     		if ('col' in $$props) col = $$props.col;
-    		if ('row' in $$props) $$invalidate(5, row = $$props.row);
-    		if ('shipVertical' in $$props) $$invalidate(4, shipVertical = $$props.shipVertical);
+    		if ('row' in $$props) $$invalidate(8, row = $$props.row);
+    		if ('shipDragging' in $$props) $$invalidate(17, shipDragging = $$props.shipDragging);
+    		if ('shipVertical' in $$props) $$invalidate(7, shipVertical = $$props.shipVertical);
     	};
 
     	if ($$props && "$$inject" in $$props) {
@@ -2706,39 +2778,50 @@ var app = (function () {
     	}
 
     	$$self.$$.update = () => {
-    		if ($$self.$$.dirty & /*vertical*/ 2048) {
-    			$$invalidate(4, shipVertical = vertical);
+    		if ($$self.$$.dirty & /*vertical*/ 16384) {
+    			$$invalidate(7, shipVertical = vertical);
     		}
 
-    		if ($$self.$$.dirty & /*tileRow*/ 4096) {
-    			$$invalidate(5, row = tileRow);
+    		if ($$self.$$.dirty & /*tileRow*/ 32768) {
+    			$$invalidate(8, row = tileRow);
     		}
 
-    		if ($$self.$$.dirty & /*tileCol*/ 8192) {
+    		if ($$self.$$.dirty & /*tileCol*/ 65536) {
     			col = tileCol;
     		}
 
-    		if ($$self.$$.dirty & /*count*/ 2) {
+    		if ($$self.$$.dirty & /*dragging*/ 16) {
+    			$$invalidate(17, shipDragging = dragging);
+    		}
+
+    		if ($$self.$$.dirty & /*shipDragging*/ 131072) {
+    			console.log(shipDragging);
+    		}
+
+    		if ($$self.$$.dirty & /*count*/ 32) {
     			if (count == 1) {
-    				$$invalidate(3, shipName = "Battleship");
+    				$$invalidate(6, shipName = "Battleship");
     			} else if (count == 2) {
-    				$$invalidate(3, shipName = "Cruiser");
+    				$$invalidate(6, shipName = "Cruiser");
     			} else if (count == 3) {
-    				$$invalidate(3, shipName = "Submarine");
+    				$$invalidate(6, shipName = "Submarine");
     			} else if (count == 4) {
-    				$$invalidate(3, shipName = "Patrol");
+    				$$invalidate(6, shipName = "Patrol");
     			} else if (count > 4) {
-    				$$invalidate(3, shipName = "");
+    				$$invalidate(6, shipName = "");
     			}
     		}
     	};
 
-    	$$invalidate(3, shipName = "Carrier");
+    	$$invalidate(6, shipName = "Carrier");
 
     	return [
     		board,
-    		count,
+    		hideBtn,
+    		randomBoard,
+    		boardOwner,
     		dragging,
+    		count,
     		shipName,
     		shipVertical,
     		row,
@@ -2750,6 +2833,7 @@ var app = (function () {
     		vertical,
     		tileRow,
     		tileCol,
+    		shipDragging,
     		dragover_handler
     	];
     }
@@ -2757,7 +2841,13 @@ var app = (function () {
     class BoardUI extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$2, create_fragment$2, safe_not_equal, { board: 0 });
+
+    		init(this, options, instance$2, create_fragment$2, safe_not_equal, {
+    			board: 0,
+    			hideBtn: 1,
+    			randomBoard: 2,
+    			boardOwner: 3
+    		});
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
@@ -2770,7 +2860,19 @@ var app = (function () {
     		const props = options.props || {};
 
     		if (/*board*/ ctx[0] === undefined && !('board' in props)) {
-    			console.warn("<BoardUI> was created without expected prop 'board'");
+    			console_1.warn("<BoardUI> was created without expected prop 'board'");
+    		}
+
+    		if (/*hideBtn*/ ctx[1] === undefined && !('hideBtn' in props)) {
+    			console_1.warn("<BoardUI> was created without expected prop 'hideBtn'");
+    		}
+
+    		if (/*randomBoard*/ ctx[2] === undefined && !('randomBoard' in props)) {
+    			console_1.warn("<BoardUI> was created without expected prop 'randomBoard'");
+    		}
+
+    		if (/*boardOwner*/ ctx[3] === undefined && !('boardOwner' in props)) {
+    			console_1.warn("<BoardUI> was created without expected prop 'boardOwner'");
     		}
     	}
 
@@ -2781,6 +2883,30 @@ var app = (function () {
     	set board(value) {
     		throw new Error("<BoardUI>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
+
+    	get hideBtn() {
+    		throw new Error("<BoardUI>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set hideBtn(value) {
+    		throw new Error("<BoardUI>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get randomBoard() {
+    		throw new Error("<BoardUI>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set randomBoard(value) {
+    		throw new Error("<BoardUI>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get boardOwner() {
+    		throw new Error("<BoardUI>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set boardOwner(value) {
+    		throw new Error("<BoardUI>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
     }
 
     /* src/components/EnemyBoardUI.svelte generated by Svelte v3.50.1 */
@@ -2788,19 +2914,19 @@ var app = (function () {
 
     function get_each_context(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[1] = list[i];
-    	child_ctx[3] = i;
-    	return child_ctx;
-    }
-
-    function get_each_context_1(ctx, list, i) {
-    	const child_ctx = ctx.slice();
     	child_ctx[4] = list[i];
     	child_ctx[6] = i;
     	return child_ctx;
     }
 
-    // (33:62) 
+    function get_each_context_1(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[7] = list[i];
+    	child_ctx[9] = i;
+    	return child_ctx;
+    }
+
+    // (36:62) 
     function create_if_block_3(ctx) {
     	let div;
 
@@ -2808,14 +2934,15 @@ var app = (function () {
     		c: function create() {
     			div = element("div");
     			div.textContent = "X \n          ";
-    			attr_dev(div, "class", "" + (null_to_empty("hitted-tile") + " svelte-dgv5h5"));
-    			attr_dev(div, "data-row", /*rowIndex*/ ctx[3]);
-    			attr_dev(div, "data-col", /*colIndex*/ ctx[6]);
-    			add_location(div, file$1, 33, 10, 979);
+    			attr_dev(div, "class", "" + (null_to_empty("hitted-tile") + " svelte-1kpgdp1"));
+    			attr_dev(div, "data-row", /*rowIndex*/ ctx[6]);
+    			attr_dev(div, "data-col", /*colIndex*/ ctx[9]);
+    			add_location(div, file$1, 36, 10, 1114);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
     		},
+    		p: noop,
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(div);
     		}
@@ -2825,14 +2952,14 @@ var app = (function () {
     		block,
     		id: create_if_block_3.name,
     		type: "if",
-    		source: "(33:62) ",
+    		source: "(36:62) ",
     		ctx
     	});
 
     	return block;
     }
 
-    // (25:57) 
+    // (28:62) 
     function create_if_block_2(ctx) {
     	let div;
 
@@ -2840,14 +2967,15 @@ var app = (function () {
     		c: function create() {
     			div = element("div");
     			div.textContent = "*\n          ";
-    			attr_dev(div, "class", "" + (null_to_empty("missed-tile") + " svelte-dgv5h5"));
-    			attr_dev(div, "data-row", /*rowIndex*/ ctx[3]);
-    			attr_dev(div, "data-col", /*colIndex*/ ctx[6]);
-    			add_location(div, file$1, 25, 10, 756);
+    			attr_dev(div, "class", "" + (null_to_empty("missed-tile") + " svelte-1kpgdp1"));
+    			attr_dev(div, "data-row", /*rowIndex*/ ctx[6]);
+    			attr_dev(div, "data-col", /*colIndex*/ ctx[9]);
+    			add_location(div, file$1, 28, 10, 891);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
     		},
+    		p: noop,
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(div);
     		}
@@ -2857,30 +2985,40 @@ var app = (function () {
     		block,
     		id: create_if_block_2.name,
     		type: "if",
-    		source: "(25:57) ",
+    		source: "(28:62) ",
     		ctx
     	});
 
     	return block;
     }
 
-    // (18:109) 
+    // (20:109) 
     function create_if_block_1(ctx) {
     	let div;
+    	let mounted;
+    	let dispose;
 
     	const block = {
     		c: function create() {
     			div = element("div");
-    			attr_dev(div, "class", "" + (null_to_empty("empty-tile") + " svelte-dgv5h5"));
-    			attr_dev(div, "data-row", /*rowIndex*/ ctx[3]);
-    			attr_dev(div, "data-col", /*colIndex*/ ctx[6]);
-    			add_location(div, file$1, 18, 10, 553);
+    			attr_dev(div, "class", "" + (null_to_empty("empty-tile") + " svelte-1kpgdp1"));
+    			attr_dev(div, "data-row", /*rowIndex*/ ctx[6]);
+    			attr_dev(div, "data-col", /*colIndex*/ ctx[9]);
+    			add_location(div, file$1, 20, 10, 630);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
+
+    			if (!mounted) {
+    				dispose = listen_dev(div, "click", /*click_handler_1*/ ctx[3], false, false, false);
+    				mounted = true;
+    			}
     		},
+    		p: noop,
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(div);
+    			mounted = false;
+    			dispose();
     		}
     	};
 
@@ -2888,30 +3026,40 @@ var app = (function () {
     		block,
     		id: create_if_block_1.name,
     		type: "if",
-    		source: "(18:109) ",
+    		source: "(20:109) ",
     		ctx
     	});
 
     	return block;
     }
 
-    // (11:8) {#if board.board[rowIndex][colIndex] == 0}
+    // (12:8) {#if board.board[rowIndex][colIndex] == 0}
     function create_if_block(ctx) {
     	let div;
+    	let mounted;
+    	let dispose;
 
     	const block = {
     		c: function create() {
     			div = element("div");
-    			attr_dev(div, "class", "" + (null_to_empty("empty-tile") + " svelte-dgv5h5"));
-    			attr_dev(div, "data-row", /*rowIndex*/ ctx[3]);
-    			attr_dev(div, "data-col", /*colIndex*/ ctx[6]);
-    			add_location(div, file$1, 11, 10, 299);
+    			attr_dev(div, "class", "" + (null_to_empty("empty-tile") + " svelte-1kpgdp1"));
+    			attr_dev(div, "data-row", /*rowIndex*/ ctx[6]);
+    			attr_dev(div, "data-col", /*colIndex*/ ctx[9]);
+    			add_location(div, file$1, 12, 10, 323);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
+
+    			if (!mounted) {
+    				dispose = listen_dev(div, "click", /*click_handler*/ ctx[2], false, false, false);
+    				mounted = true;
+    			}
     		},
+    		p: noop,
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(div);
+    			mounted = false;
+    			dispose();
     		}
     	};
 
@@ -2919,22 +3067,22 @@ var app = (function () {
     		block,
     		id: create_if_block.name,
     		type: "if",
-    		source: "(11:8) {#if board.board[rowIndex][colIndex] == 0}",
+    		source: "(12:8) {#if board.board[rowIndex][colIndex] == 0}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (10:6) {#each row as col, colIndex}
+    // (11:6) {#each row as col, colIndex}
     function create_each_block_1(ctx) {
     	let if_block_anchor;
 
     	function select_block_type(ctx, dirty) {
-    		if (/*board*/ ctx[0].board[/*rowIndex*/ ctx[3]][/*colIndex*/ ctx[6]] == 0) return create_if_block;
-    		if (/*board*/ ctx[0].board[/*rowIndex*/ ctx[3]][/*colIndex*/ ctx[6]] == 1 || typeof /*board*/ ctx[0].board[/*rowIndex*/ ctx[3]][/*colIndex*/ ctx[6]] == "object") return create_if_block_1;
-    		if (/*board*/ ctx[0].board[/*rowIndex*/ ctx[3]][/*colIndex*/ ctx[6]] == "X") return create_if_block_2;
-    		if (/*board*/ ctx[0].board[/*rowIndex*/ ctx[3]][/*colIndex*/ ctx[6]] == "Hitted") return create_if_block_3;
+    		if (/*board*/ ctx[0].board[/*rowIndex*/ ctx[6]][/*colIndex*/ ctx[9]] == 0) return create_if_block;
+    		if (/*board*/ ctx[0].board[/*rowIndex*/ ctx[6]][/*colIndex*/ ctx[9]] == 1 || typeof /*board*/ ctx[0].board[/*rowIndex*/ ctx[6]][/*colIndex*/ ctx[9]] == "object") return create_if_block_1;
+    		if (/*board*/ ctx[0].board[/*rowIndex*/ ctx[6]][/*colIndex*/ ctx[9]] == "Missed") return create_if_block_2;
+    		if (/*board*/ ctx[0].board[/*rowIndex*/ ctx[6]][/*colIndex*/ ctx[9]] == "Hitted") return create_if_block_3;
     	}
 
     	let current_block_type = select_block_type(ctx);
@@ -2950,7 +3098,9 @@ var app = (function () {
     			insert_dev(target, if_block_anchor, anchor);
     		},
     		p: function update(ctx, dirty) {
-    			if (current_block_type !== (current_block_type = select_block_type(ctx))) {
+    			if (current_block_type === (current_block_type = select_block_type(ctx)) && if_block) {
+    				if_block.p(ctx, dirty);
+    			} else {
     				if (if_block) if_block.d(1);
     				if_block = current_block_type && current_block_type(ctx);
 
@@ -2973,17 +3123,17 @@ var app = (function () {
     		block,
     		id: create_each_block_1.name,
     		type: "each",
-    		source: "(10:6) {#each row as col, colIndex}",
+    		source: "(11:6) {#each row as col, colIndex}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (9:4) {#each board.board as row, rowIndex}
+    // (10:4) {#each board.board as row, rowIndex}
     function create_each_block(ctx) {
     	let each_1_anchor;
-    	let each_value_1 = /*row*/ ctx[1];
+    	let each_value_1 = /*row*/ ctx[4];
     	validate_each_argument(each_value_1);
     	let each_blocks = [];
 
@@ -3007,8 +3157,8 @@ var app = (function () {
     			insert_dev(target, each_1_anchor, anchor);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*board*/ 1) {
-    				each_value_1 = /*row*/ ctx[1];
+    			if (dirty & /*attackBoard, board*/ 3) {
+    				each_value_1 = /*row*/ ctx[4];
     				validate_each_argument(each_value_1);
     				let i;
 
@@ -3041,7 +3191,7 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(9:4) {#each board.board as row, rowIndex}",
+    		source: "(10:4) {#each board.board as row, rowIndex}",
     		ctx
     	});
 
@@ -3068,10 +3218,10 @@ var app = (function () {
     				each_blocks[i].c();
     			}
 
-    			attr_dev(div, "class", "board-container svelte-dgv5h5");
-    			add_location(div, file$1, 7, 2, 132);
+    			attr_dev(div, "class", "board-container svelte-1kpgdp1");
+    			add_location(div, file$1, 8, 2, 156);
     			attr_dev(main, "class", "container");
-    			add_location(main, file$1, 6, 0, 105);
+    			add_location(main, file$1, 7, 0, 129);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -3085,7 +3235,7 @@ var app = (function () {
     			}
     		},
     		p: function update(ctx, [dirty]) {
-    			if (dirty & /*board*/ 1) {
+    			if (dirty & /*board, attackBoard*/ 3) {
     				each_value = /*board*/ ctx[0].board;
     				validate_each_argument(each_value);
     				let i;
@@ -3132,33 +3282,39 @@ var app = (function () {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('EnemyBoardUI', slots, []);
     	let { board } = $$props;
-    	const writable_props = ['board'];
+    	let { attackBoard } = $$props;
+    	const writable_props = ['board', 'attackBoard'];
 
     	Object.keys($$props).forEach(key => {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<EnemyBoardUI> was created with unknown prop '${key}'`);
     	});
 
+    	const click_handler = event => attackBoard(event);
+    	const click_handler_1 = event => attackBoard(event);
+
     	$$self.$$set = $$props => {
     		if ('board' in $$props) $$invalidate(0, board = $$props.board);
+    		if ('attackBoard' in $$props) $$invalidate(1, attackBoard = $$props.attackBoard);
     	};
 
-    	$$self.$capture_state = () => ({ board });
+    	$$self.$capture_state = () => ({ board, attackBoard });
 
     	$$self.$inject_state = $$props => {
     		if ('board' in $$props) $$invalidate(0, board = $$props.board);
+    		if ('attackBoard' in $$props) $$invalidate(1, attackBoard = $$props.attackBoard);
     	};
 
     	if ($$props && "$$inject" in $$props) {
     		$$self.$inject_state($$props.$$inject);
     	}
 
-    	return [board];
+    	return [board, attackBoard, click_handler, click_handler_1];
     }
 
     class EnemyBoardUI extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$1, create_fragment$1, safe_not_equal, { board: 0 });
+    		init(this, options, instance$1, create_fragment$1, safe_not_equal, { board: 0, attackBoard: 1 });
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
@@ -3173,6 +3329,10 @@ var app = (function () {
     		if (/*board*/ ctx[0] === undefined && !('board' in props)) {
     			console.warn("<EnemyBoardUI> was created without expected prop 'board'");
     		}
+
+    		if (/*attackBoard*/ ctx[1] === undefined && !('attackBoard' in props)) {
+    			console.warn("<EnemyBoardUI> was created without expected prop 'attackBoard'");
+    		}
     	}
 
     	get board() {
@@ -3182,50 +3342,120 @@ var app = (function () {
     	set board(value) {
     		throw new Error("<EnemyBoardUI>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
+
+    	get attackBoard() {
+    		throw new Error("<EnemyBoardUI>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set attackBoard(value) {
+    		throw new Error("<EnemyBoardUI>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+    }
+
+    class Player {
+        constructor(turn, human) {
+            this.turn = turn;
+            this.human = human;
+        }
+        setTurn() {
+            return this.turn == false ? this.turn = true : this.turn = false;
+        }
+        attackable(board, row, col) {
+            return board.board[row][col] == 0 || board.board[row][col] == 1 || typeof board.board[row][col] == "object";
+        }
+        userAttack(board, row, col) {
+            if (this.attackable(board, row, col)) {
+                board.receiveAttack(row, col);
+                board = board;
+            }
+            else {
+                return 0;
+            }
+        }
+        computerAttack(board, turn) {
+            while (turn == false) {
+                let row = Math.floor(Math.random() * 10);
+                let col = Math.floor(Math.random() * 10);
+                if (this.attackable(board, row, col)) {
+                    board.receiveAttack(row, col);
+                    board = board;
+                    turn = true;
+                }
+                else {
+                    return 0;
+                }
+            }
+        }
     }
 
     /* src/App.svelte generated by Svelte v3.50.1 */
-
-    const { console: console_1 } = globals;
     const file = "src/App.svelte";
 
     function create_fragment(ctx) {
     	let main;
+    	let h2;
+    	let t1;
+    	let div;
     	let boardui;
-    	let t;
+    	let t2;
     	let enemyboardui;
     	let current;
 
     	boardui = new BoardUI({
-    			props: { board: /*userBoard*/ ctx[0] },
+    			props: {
+    				board: /*userBoard*/ ctx[0],
+    				randomBoard: /*randomBoard*/ ctx[3],
+    				hideBtn: /*hideBtn*/ ctx[2]
+    			},
     			$$inline: true
     		});
 
     	enemyboardui = new EnemyBoardUI({
-    			props: { board: /*computerBoard*/ ctx[1] },
+    			props: {
+    				board: /*computerBoard*/ ctx[1],
+    				attackBoard: /*func*/ ctx[7]
+    			},
     			$$inline: true
     		});
 
     	const block = {
     		c: function create() {
     			main = element("main");
+    			h2 = element("h2");
+    			h2.textContent = "Battleship";
+    			t1 = space();
+    			div = element("div");
     			create_component(boardui.$$.fragment);
-    			t = space();
+    			t2 = space();
     			create_component(enemyboardui.$$.fragment);
-    			attr_dev(main, "class", "svelte-16duz76");
-    			add_location(main, file, 13, 0, 470);
+    			attr_dev(h2, "class", "svelte-j31s19");
+    			add_location(h2, file, 52, 2, 1729);
+    			attr_dev(div, "class", "svelte-j31s19");
+    			add_location(div, file, 53, 2, 1751);
+    			attr_dev(main, "class", "svelte-j31s19");
+    			add_location(main, file, 51, 0, 1720);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, main, anchor);
-    			mount_component(boardui, main, null);
-    			append_dev(main, t);
-    			mount_component(enemyboardui, main, null);
+    			append_dev(main, h2);
+    			append_dev(main, t1);
+    			append_dev(main, div);
+    			mount_component(boardui, div, null);
+    			append_dev(div, t2);
+    			mount_component(enemyboardui, div, null);
     			current = true;
     		},
-    		p: noop,
+    		p: function update(ctx, [dirty]) {
+    			const boardui_changes = {};
+    			if (dirty & /*userBoard*/ 1) boardui_changes.board = /*userBoard*/ ctx[0];
+    			boardui.$set(boardui_changes);
+    			const enemyboardui_changes = {};
+    			if (dirty & /*computerBoard*/ 2) enemyboardui_changes.board = /*computerBoard*/ ctx[1];
+    			enemyboardui.$set(enemyboardui_changes);
+    		},
     		i: function intro(local) {
     			if (current) return;
     			transition_in(boardui.$$.fragment, local);
@@ -3258,40 +3488,112 @@ var app = (function () {
     function instance($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('App', slots, []);
-    	let carrier = new Ship(4, [], false);
     	let userBoard = new Gameboard();
     	let computerBoard = new Gameboard();
-    	computerBoard.receiveAttack(5, 0);
-    	computerBoard.placeShip(carrier, 3, 0, false);
-    	console.log(computerBoard);
-    	computerBoard.receiveAttack(3, 0);
+    	let turn = false;
+    	let started = false;
+    	let finish = false;
+    	let player = new Player(turn, true);
+    	let computer = new Player(false, false);
+
+    	const hideBtn = () => {
+    		document.querySelector("#init-btn-container").remove();
+    		document.querySelector("#ship-container").remove();
+    		computerBoard.placeRandomly();
+    		$$invalidate(1, computerBoard);
+    		$$invalidate(6, started = true);
+    		$$invalidate(5, turn = true);
+    	};
+
+    	const randomBoard = () => {
+    		document.querySelector("#init-btn-container").remove();
+    		document.querySelector("#ship-container").remove();
+    		userBoard.placeRandomly();
+    		$$invalidate(0, userBoard);
+    		computerBoard.placeRandomly();
+    		$$invalidate(1, computerBoard);
+    		$$invalidate(6, started = true);
+    		$$invalidate(5, turn = true);
+    	};
+
+    	const userAttack = event => {
+    		let row = parseInt(event.target.getAttribute("data-row"));
+    		let col = parseInt(event.target.getAttribute("data-col"));
+    		if (turn == true && computerBoard.endGame() == false && userBoard.endGame() == false) player.userAttack(computerBoard, row, col);
+    		$$invalidate(1, computerBoard);
+    		$$invalidate(5, turn = false);
+    	};
+
+    	const computerAttack = () => {
+    		computer.computerAttack(userBoard, turn);
+    		$$invalidate(0, userBoard);
+    		$$invalidate(5, turn = true);
+    	};
+
     	const writable_props = [];
 
     	Object.keys($$props).forEach(key => {
-    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console_1.warn(`<App> was created with unknown prop '${key}'`);
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<App> was created with unknown prop '${key}'`);
     	});
 
+    	const func = event => userAttack(event);
+
     	$$self.$capture_state = () => ({
-    		BoardUi: BoardUI,
+    		BoardUI,
     		EnemyBoardUi: EnemyBoardUI,
     		Gameboard,
-    		Ship,
-    		carrier,
+    		Player,
     		userBoard,
-    		computerBoard
+    		computerBoard,
+    		turn,
+    		started,
+    		finish,
+    		player,
+    		computer,
+    		hideBtn,
+    		randomBoard,
+    		userAttack,
+    		computerAttack
     	});
 
     	$$self.$inject_state = $$props => {
-    		if ('carrier' in $$props) carrier = $$props.carrier;
     		if ('userBoard' in $$props) $$invalidate(0, userBoard = $$props.userBoard);
     		if ('computerBoard' in $$props) $$invalidate(1, computerBoard = $$props.computerBoard);
+    		if ('turn' in $$props) $$invalidate(5, turn = $$props.turn);
+    		if ('started' in $$props) $$invalidate(6, started = $$props.started);
+    		if ('finish' in $$props) finish = $$props.finish;
+    		if ('player' in $$props) player = $$props.player;
+    		if ('computer' in $$props) computer = $$props.computer;
     	};
 
     	if ($$props && "$$inject" in $$props) {
     		$$self.$inject_state($$props.$$inject);
     	}
 
-    	return [userBoard, computerBoard];
+    	$$self.$$.update = () => {
+    		if ($$self.$$.dirty & /*started, turn, userBoard*/ 97) {
+    			if (started == true && turn == false && userBoard.endGame() == false && userBoard.endGame() == false) {
+    				computerAttack();
+    			}
+    		}
+
+    		if ($$self.$$.dirty & /*userBoard, computerBoard*/ 3) {
+    			if (userBoard.endGame() == true || computerBoard.endGame() == true) {
+    				finish = true;
+    			}
+    		}
+    	};
+
+    	return [
+    		userBoard,
+    		computerBoard,
+    		hideBtn,
+    		randomBoard,
+    		userAttack,
+    		turn,
+    		started,
+    		func
+    	];
     }
 
     class App extends SvelteComponentDev {

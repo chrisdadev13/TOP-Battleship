@@ -9,18 +9,35 @@ export default class Player{
     this.human = human;  
   }
 
-  computerAttack(board: any){
-    let row: number;
-    let col: number;
+  setTurn(){
+    return this.turn == false ? this.turn = true : this.turn = false;
+  }
 
-    while(this.turn == true){
-      row = (Math.random() * 10) + 1;
-      col = (Math.random() * 10) + 1;
-      if(board[row][col] == 0 || typeof board[row][col] == 'object'){
+  attackable(board: any, row: number, col: number){
+    return board.board[row][col] == 0 || board.board[row][col] == 1 || typeof board.board[row][col] == "object";
+  }
+
+  userAttack(board: any, row: number, col: number){
+    if(this.attackable(board, row, col)){
+      board.receiveAttack(row, col);
+      board = board;
+    }else{
+      return 0;
+    }
+  }
+
+  computerAttack(board: any, turn: boolean){
+    while(turn == false){
+      let row = Math.floor(Math.random() * 10);
+      let col = Math.floor(Math.random() * 10);
+
+      if(this.attackable(board, row, col)){
         board.receiveAttack(row, col);
-        this.turn = false;
-      }else{
-        this.turn = true;
+        board = board;
+        turn = true;
+      }
+      else{
+        return 0;
       }
     }
   }

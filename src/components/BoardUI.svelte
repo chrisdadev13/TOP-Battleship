@@ -5,6 +5,7 @@
 
   export let board: Gameboard;
   export let hideBtn: any;
+  export let randomBoard: any;
   export let boardOwner: string;
 
   let carrier = new Ship(4, 0, false, []);
@@ -127,12 +128,13 @@
     {/each}
   </div>  
   <div style="position: abolute; display: flex;" id="init-btn-container">
+    <p class="rotate-button" on:click={randomBoard}>Random</p>
     <p class={count == 5 ? "inactive-button" : "rotate-button"} on:click={rotateShips}>Rotate</p>
     <p class={count == 5 ? "rotate-button" : "inactive-button"} on:click={count != 5 ? () => {return 0} : hideBtn}>Play</p>
   </div>
 </main>
 
-<div style="text-align: center;">
+<div style="text-align: center;" id="ship-container">
   <h2>{shipName}</h2>
   <ShipsUI ships={ships} vertical={shipVertical} onDragShip={dragShip} offDragShip={dropShip} count={count} />
 </div>
