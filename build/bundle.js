@@ -3412,7 +3412,9 @@ var app = (function () {
     			insert_dev(target, if_block_anchor, anchor);
     		},
     		p: function update(ctx, dirty) {
-    			if (current_block_type !== (current_block_type = select_block_type(ctx))) {
+    			if (current_block_type === (current_block_type = select_block_type(ctx)) && if_block) {
+    				if_block.p(ctx, dirty);
+    			} else {
     				if (if_block) if_block.d(1);
     				if_block = current_block_type && current_block_type(ctx);
 
@@ -3442,12 +3444,16 @@ var app = (function () {
     	return block;
     }
 
-    // (71:35) 
+    // (72:35) 
     function create_if_block_2(ctx) {
     	let div;
     	let h2;
     	let t1;
     	let p;
+    	let t3;
+    	let button;
+    	let mounted;
+    	let dispose;
 
     	const block = {
     		c: function create() {
@@ -3456,23 +3462,35 @@ var app = (function () {
     			h2.textContent = "You lose";
     			t1 = space();
     			p = element("p");
-    			p.textContent = "Congratulations to the robots!!";
-    			attr_dev(h2, "class", "svelte-j31s19");
-    			add_location(h2, file, 72, 8, 2410);
-    			add_location(p, file, 73, 8, 2436);
-    			set_style(div, "display", "flex");
-    			set_style(div, "flex-direction", "column");
-    			attr_dev(div, "class", "svelte-j31s19");
-    			add_location(div, file, 71, 6, 2349);
+    			p.textContent = "Meh, congratulations to the robots";
+    			t3 = space();
+    			button = element("button");
+    			button.textContent = "Play Again";
+    			attr_dev(h2, "class", "svelte-bw9fy7");
+    			add_location(h2, file, 73, 8, 2444);
+    			add_location(p, file, 74, 8, 2470);
+    			add_location(button, file, 75, 8, 2520);
+    			attr_dev(div, "class", "winner-modal svelte-bw9fy7");
+    			add_location(div, file, 72, 6, 2409);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
     			append_dev(div, h2);
     			append_dev(div, t1);
     			append_dev(div, p);
+    			append_dev(div, t3);
+    			append_dev(div, button);
+
+    			if (!mounted) {
+    				dispose = listen_dev(button, "click", /*click_handler_1*/ ctx[11], false, false, false);
+    				mounted = true;
+    			}
     		},
+    		p: noop,
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(div);
+    			mounted = false;
+    			dispose();
     		}
     	};
 
@@ -3480,7 +3498,7 @@ var app = (function () {
     		block,
     		id: create_if_block_2.name,
     		type: "if",
-    		source: "(71:35) ",
+    		source: "(72:35) ",
     		ctx
     	});
 
@@ -3493,6 +3511,10 @@ var app = (function () {
     	let h2;
     	let t1;
     	let p;
+    	let t3;
+    	let button;
+    	let mounted;
+    	let dispose;
 
     	const block = {
     		c: function create() {
@@ -3501,13 +3523,15 @@ var app = (function () {
     			h2.textContent = "We have a winner";
     			t1 = space();
     			p = element("p");
-    			p.textContent = "Congratulations you are the winner";
-    			attr_dev(h2, "class", "svelte-j31s19");
-    			add_location(h2, file, 67, 8, 2218);
-    			add_location(p, file, 68, 8, 2252);
-    			set_style(div, "display", "flex");
-    			set_style(div, "flex-direction", "column");
-    			attr_dev(div, "class", "svelte-j31s19");
+    			p.textContent = "Congratulations human you are the winner!!";
+    			t3 = space();
+    			button = element("button");
+    			button.textContent = "Play Again";
+    			attr_dev(h2, "class", "svelte-bw9fy7");
+    			add_location(h2, file, 67, 8, 2192);
+    			add_location(p, file, 68, 8, 2226);
+    			add_location(button, file, 69, 8, 2284);
+    			attr_dev(div, "class", "winner-modal svelte-bw9fy7");
     			add_location(div, file, 66, 6, 2157);
     		},
     		m: function mount(target, anchor) {
@@ -3515,9 +3539,19 @@ var app = (function () {
     			append_dev(div, h2);
     			append_dev(div, t1);
     			append_dev(div, p);
+    			append_dev(div, t3);
+    			append_dev(div, button);
+
+    			if (!mounted) {
+    				dispose = listen_dev(button, "click", /*click_handler*/ ctx[10], false, false, false);
+    				mounted = true;
+    			}
     		},
+    		p: noop,
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(div);
+    			mounted = false;
+    			dispose();
     		}
     	};
 
@@ -3574,11 +3608,11 @@ var app = (function () {
     			create_component(enemyboardui.$$.fragment);
     			t3 = space();
     			if (if_block) if_block.c();
-    			attr_dev(h2, "class", "svelte-j31s19");
+    			attr_dev(h2, "class", "svelte-bw9fy7");
     			add_location(h2, file, 59, 2, 1901);
-    			attr_dev(div, "class", "svelte-j31s19");
+    			attr_dev(div, "class", "svelte-bw9fy7");
     			add_location(div, file, 60, 2, 1923);
-    			attr_dev(main, "class", "svelte-j31s19");
+    			attr_dev(main, "class", "svelte-bw9fy7");
     			add_location(main, file, 58, 0, 1892);
     		},
     		l: function claim(nodes) {
@@ -3700,6 +3734,8 @@ var app = (function () {
     	});
 
     	const func = event => userAttack(event);
+    	const click_handler = () => window.location.reload();
+    	const click_handler_1 = () => window.location.reload();
 
     	$$self.$capture_state = () => ({
     		BoardUI,
@@ -3765,7 +3801,9 @@ var app = (function () {
     		userAttack,
     		turn,
     		started,
-    		func
+    		func,
+    		click_handler,
+    		click_handler_1
     	];
     }
 
