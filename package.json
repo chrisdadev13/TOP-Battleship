@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "build": "rollup -c",
+    "deploy": "npx gh-pages -d dist",
     "dev": "rollup -c -w",
     "start": "sirv public --no-clear",
     "check": "svelte-check --tsconfig ./tsconfig.json"
@@ -13,6 +14,7 @@
     "@rollup/plugin-node-resolve": "^11.0.0",
     "@rollup/plugin-typescript": "^8.0.0",
     "@tsconfig/svelte": "^2.0.1",
+    "gh-pages": "^4.0.0",
     "rollup": "^2.3.4",
     "rollup-plugin-css-only": "^3.1.0",
     "rollup-plugin-livereload": "^2.0.0",
@@ -25,7 +27,6 @@
     "typescript": "^4.8.4"
   },
   "dependencies": {
-    "gh-pages": "^4.0.0",
     "sirv-cli": "^2.0.0",
     "svelte-icons": "^2.1.0"
   }
