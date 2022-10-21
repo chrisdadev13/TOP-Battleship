@@ -73,14 +73,16 @@
   </div>
   {#if finish == true}
     {#if winner == "User"}
-      <div style="display: flex; flex-direction: column;">
+      <div class="winner-modal">
         <h2>We have a winner</h2>
-        <p>Congratulations you are the winner</p>
+        <p>Congratulations human you are the winner!!</p>
+        <button on:click={() => window.location.reload()}>Play Again</button>
       </div>
     {:else if winner == "Computer"}
-      <div style="display: flex; flex-direction: column;">
+      <div class="winner-modal">
         <h2>You lose</h2>
-        <p>Congratulations to the robots!!</p>
+        <p>Meh, congratulations to the robots</p>
+        <button on:click={() => window.location.reload()}>Play Again</button>
       </div>
     {/if}
   {/if}
@@ -101,5 +103,18 @@
   }
   h2{
     font-size: 36px;
+  }
+  .winner-modal{
+    position: absolute; 
+    background-color: white;
+    left: 0; 
+    right: 0; 
+    margin-left: auto; 
+    margin-right: auto; 
+    width: 100px; /* Need a specific value to work */
+    display: flex;
+    flex-direction: column;
+    width: 60vw;
+    height: 60vh;
   }
 </style>
