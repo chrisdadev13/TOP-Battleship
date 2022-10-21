@@ -2,7 +2,6 @@
   import BoardUI from "./components/BoardUI.svelte";
   import EnemyBoardUi from "./components/EnemyBoardUI.svelte";
   import Gameboard from "./scripts/gameboard";
-  import Ship from './scripts/ship';
   import Player from './scripts/player';
 
   let userBoard = new Gameboard;

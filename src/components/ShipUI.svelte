@@ -1,7 +1,4 @@
 <script lang="ts">
-    import { onDestroy } from "svelte/types/runtime/internal/lifecycle";
-
-
   export let ships:any;
   export let vertical: boolean;
 
